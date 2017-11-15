@@ -18,8 +18,8 @@ aws_secret_key = os.environ["AWS_SECRET_KEY"]
 
 apiai_url = "https://api.api.ai/v1/query"
 apiai_querystring = {"v": "20150910"}
-registered_users = {"+447477471234": "Ameer",
-                   "+447481191234": "Doug"
+registered_users = {"+919840610434": "Vijay",
+                   "+919840848461": "Sriram"
 }
 # Adjust the hints for improved Speech to Text
 hints = "1 one first, 2 two second, 20 twenty, 25 twentyfifth, 6 sixth twentysixth, sir albert, westin, hyatt, inter continental, march, april, may, june"
