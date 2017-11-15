@@ -1,9 +1,9 @@
 {
-  "name": "Twilio IVR Speech Bot",
-  "description": "Next Generation IVR Using Twilio Speech Recognition and Chatbot",
-  "repository": "https://github.com/ameerbadri/twilio-ivr-speech-bot",
+  "name": "Intent based IVR",
+  "description": "ML Powered Conversational IVR",
+  "repository": "https://github.com/vijayraghu/bankteller",
   "logo": "http://presos.jamesward.com/practicing_continuous_delivery/assets/python.png",
-  "keywords": ["python", "twilio", "ivr"],
+  "keywords": ["python", "intent-based", "ivr"],
   "env": {
   "APIAPI_CLIENT_ACCESS_KEY": {
     "description": "Your API.AI Bot Client Access Key",
