@@ -31,7 +31,7 @@ def start():
     caller_phone_number = request.values.get('From')
     user_id = request.values.get('CallSid')
     polly_voiceid = request.values.get('polly_voiceid', "Joanna")
-    twilio_asr_language = request.values.get('twilio_asr_language', "en-US")
+    twilio_asr_language = request.values.get('twilio_asr_language', "en-IN")
     apiai_language = request.values.get('apiai_language', "en")
     caller_name = registered_users.get(caller_phone_number, " ")
     hostname = request.url_root
