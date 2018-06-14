@@ -266,6 +266,7 @@ def getBalance(nickname, Accounttype):
     print apiKey
     if Accounttype == 'Savings':
         accountId = details[nickname]['Savings']
+	print accountId
     elif Accounttype == 'Checking':
         accountId = details[nickname]['Checking']
     else:
