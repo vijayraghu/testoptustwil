@@ -7,9 +7,16 @@ import json
 from flask import Flask, request, Response, make_response
 from contextlib import closing
 # Twilio Helper Library
-from twilio.twiml.voice_response import VoiceResponse, Gather
+from twilio.twiml.voice_response import VoiceResponse, Gather, Say
 # AWS Python SDK
 import boto3
+import re
+from flask import Flask
+from flask import jsonify
+from flask import url_for
+from flask import request
+from flask import make_response
+import datetime
 
 # Setup global variables
 apiai_client_access_key = os.environ["APIAPI_CLIENT_ACCESS_KEY"]
@@ -18,11 +25,11 @@ aws_secret_key = os.environ["AWS_SECRET_KEY"]
 
 apiai_url = "https://api.api.ai/v1/query"
 apiai_querystring = {"v": "20150910"}
-registered_users = {"+914444461324": "Vijay",
+registered_users = {"+914444461497": "Paul",
                    "+914444462805": "Peter"
 }
 # Adjust the hints for improved Speech to Text
-hints = "1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, account acount akount, Paul Pal Pole Pall Pale, Peter Petre Pete, january, february, march, april, may, june, july, august, september, october, november, december"
+hints = "1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, account acount akount, january, february, march, april, may, june, july, august, september, october, november, december"
 
 app = Flask(__name__)
 
@@ -93,9 +100,12 @@ def process_speech():
     prior_text = request.values.get('prior_text', "Prior text missing")
     prior_dialog_state = request.values.get('prior_dialog_state', "ElicitIntent")
     input_text = request.values.get("SpeechResult", "")
-    confidence = float(request.values.get("Confidence", 0.0))
+	confidence = float(request.values.get("Confidence", 0.0))
     hostname = request.url_root
     print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
+	actualvalue = re.findall(r'\b\d{3,16}\b', input_text)
+	input_text = re.sub(r'\b\d{3,16}\b','1111111', input_text)
+	print(input_text)
     sys.stdout.flush()
 
     resp = VoiceResponse()
@@ -173,7 +183,7 @@ def process_speech():
         action_url = "/process_speech?" + qs2
         resp.redirect(action_url)
     print str(resp)
-    return str(resp)
+    return str(resp), actualvalue
 
 #####
 ##### Google Api.ai - Text to Intent
@@ -210,17 +220,62 @@ def apiai_text_to_intent(apiapi_client_access_key, input_text, user_id, language
 #####
 ##### API.API fulfillment webhook (You can enable this in API.AI console)
 #####
-@app.route('/apiai_fulfillment', methods=['GET', 'POST'])
-def apiai_fulfillment():
-    res = {"speech": "Your booking is confirmed. Have a great day!",
-        "displayText": "Your booking is confirmed. Have a great day!",
-        "source": "apiai-bookhotel-webhook"
-    }
-    res = json.dumps(res)
-    r = make_response(res)
-    r.headers['Content-Type'] = 'application/json'
-    print str(r)
-    return r
+@app.route('/webhook', methods=['POST'])
+def webhook():
+	req = request.get_json(silent=True, force=True)
+	print 'Request:'
+    	print json.dumps(req, indent=4)
+    	res = processRequest(req)
+    	res = json.dumps(res, indent=4)
+    	# print(res)
+    	r = make_response(res)
+    	r.headers['Content-Type'] = 'application/json'
+    	return r
+
+def processRequest(req):
+	result = req.get('result')
+    metadata = result.get('metadata')
+    intentname = metadata.get('intentName')
+    parameters = result.get('parameters')
+    actionname = parameters.get('action')
+    accounttype = parameters.get('type')
+    #custname = parameters.get('customername')
+	phoneNo = parameters.get('phonenumber')
+	payeename = parameters.get('transcustomername')
+	payeeaccounttype = parameters.get('transtype')
+	payeeamount = parameters.get('amount')
+	a, actualvalue = process_speech()
+	#Get Balance Amount for account from account id
+	if intentname == 'Account_Balance':
+		Balance = getBalance(actualvalue, accounttype)
+		speech = 'Your ' + accounttype + ' account balance is ' + Balance + ' dollars'
+	else:
+		speech = 'You will be receiving a call on this number shortly'
+		return {'speech': speech, 
+		'displayText': speech, 
+		'source': 'apiai-account-sample'}  # "data": data, # "contextOut": [],
+    	return res
+
+#Helper function for Balance
+def getBalance(nickname, Accounttype):
+    with open('details.json') as json_file:
+	details = json.load(json_file)
+       	apiKey = os.environ.get('NESSIE_API_KEY')
+       	print apiKey
+       	if Accounttype == 'Savings':
+		accountId = details[nickname]['Savings']
+       	elif Accounttype == 'Checking':
+			accountId = details[nickname]['Checking']
+       	else:
+            accountId = details[nickname]['Credit Card']
+        url = 'http://api.reimaginebanking.com/accounts/{}?key={}'.format(accountId,apiKey)
+        print url
+        response = requests.get(url, headers={'content-type': 'application/json'})
+        result = response.json()
+        #print result
+        accountbalance = result[u'balance']
+        Balance = str(accountbalance)
+        return Balance
 
 #####
 ##### AWS Polly for Text to Speech
