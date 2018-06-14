@@ -252,11 +252,11 @@ def processRequest(req):
 		speech = 'Your ' + accounttype + ' account balance is ' + Balance + ' dollars'
 	else:
 		speech = 'You will be receiving a call on this number shortly'
-		return {'speech': speech,
-			'displayText': speech,
-			'source': 'apiai-account-sample'
-		       }
-	return res
+		
+	return {'speech': speech, 
+		'displayText': speech, 
+		'source': 'apiai-account-sample'}  # "data": data, # "contextOut": [],
+    	return res
 
 #Helper function for Balance
 def getBalance(nickname, Accounttype):
