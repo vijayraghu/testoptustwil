@@ -239,7 +239,7 @@ def processRequest(req):
     	parameters = result.get('parameters')
     	actionname = parameters.get('action')
     	accounttype = parameters.get('type')
-    	actualvalue = parameters.get('customername')
+    	actualvalue = parameters.get('accnum')
 	phoneNo = parameters.get('phonenumber')
 	payeename = parameters.get('transcustomername')
 	payeeaccounttype = parameters.get('transtype')
