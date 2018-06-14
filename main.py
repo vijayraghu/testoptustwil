@@ -109,81 +109,81 @@ def process_speech():
 	
 	resp = VoiceResponse()
 	if (confidence > 0.5):
-        # Step 1: Call Bot for intent analysis - API.AI Bot
-        intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
+		# Step 1: Call Bot for intent analysis - API.AI Bot
+		intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
         
         # Step 2: Construct TwiML
         if dialog_state in ['in-progress']:
-            values = {"prior_text": output_text, "prior_dialog_state": dialog_state}
-            qs2 = urllib.urlencode(values)
-        	action_url = "/process_speech?" + qs2
+		values = {"prior_text": output_text, "prior_dialog_state": dialog_state}
+		qs2 = urllib.urlencode(values)
+		action_url = "/process_speech?" + qs2
         	gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url,method="POST")
         	values = {"text": output_text,
-                      "polly_voiceid": polly_voiceid,
-                      "region": "us-east-1"
-            }
-            qs1 = urllib.urlencode(values)
-            gather.play(hostname + 'polly_text2speech?' + qs1)
-            resp.append(gather)
+			  "polly_voiceid": polly_voiceid,
+			  "region": "us-east-1"
+			 }
+		qs1 = urllib.urlencode(values)
+		gather.play(hostname + 'polly_text2speech?' + qs1)
+		resp.append(gather)
             
         # If gather is missing (no speech), redirect to process incomplete speech via the Bot
-            values = {"prior_text": output_text,
-                      "polly_voiceid": polly_voiceid,
-                      "twilio_asr_language": twilio_asr_language,
-                      "apiai_language": apiai_language,
-                      "SpeechResult": "",
-                      "Confidence": 0.0}
-            
-            qs3 = urllib.urlencode(values)
-            action_url = "/process_speech?" + qs3
-            resp.redirect(action_url)
-        elif dialog_state in ['complete']:
-            values = {"text": output_text,
-                      "polly_voiceid": polly_voiceid,
-                      "region": "us-east-1"
-            }
-            qs = urllib.urlencode(values)
-            resp.play(hostname + 'polly_text2speech?' + qs)
-            resp.hangup()
+           	values = {"prior_text": output_text,
+			  "polly_voiceid": polly_voiceid,
+			  "twilio_asr_language": twilio_asr_language,
+			  "apiai_language": apiai_language,
+			  "SpeechResult": "",
+			  "Confidence": 0.0}
+		qs3 = urllib.urlencode(values)
+		action_url = "/process_speech?" + qs3
+		resp.redirect(action_url)
+	elif dialog_state in ['complete']:
+		values = {"text": output_text,
+			  "polly_voiceid": polly_voiceid,
+			  "region": "us-east-1"
+			 }
+		qs = urllib.urlencode(values)
+		resp.play(hostname + 'polly_text2speech?' + qs)
+		resp.hangup()
         elif dialog_state in ['Failed']:
-            values = {"text": "I am sorry, there was an error.  Please call again!",
-                    "polly_voiceid": polly_voiceid,
-                    "region": "us-east-1"
-            }
-            qs = urllib.urlencode(values)
-            resp.play(hostname + 'polly_text2speech?' + qs)
-            resp.hangup()
-    else:
+		values = {"text": "I am sorry, there was an error.  Please call again!",
+			  "polly_voiceid": polly_voiceid,
+			  "region": "us-east-1"
+			 }
+		qs = urllib.urlencode(values)
+		resp.play(hostname + 'polly_text2speech?' + qs)
+		resp.hangup()
+	else:
         # We didn't get STT of higher confidence, replay the prior conversation
-        output_text = prior_text
-        dialog_state = prior_dialog_state
-        values = {"prior_text": output_text,
-                  "polly_voiceid": polly_voiceid,
-                  "twilio_asr_language": twilio_asr_language,
-                  "apiai_language": apiai_language,
-                  "prior_dialog_state": dialog_state}
-        qs2 = urllib.urlencode(values)
-        action_url = "/process_speech?" + qs2
-        gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url, method="POST")
-        values = {"text": output_text,
-                  "polly_voiceid": polly_voiceid,
-                  "region": "us-east-1"
-                  }
-        qs1 = urllib.urlencode(values)
-        gather.play(hostname + 'polly_text2speech?' + qs1)
-        resp.append(gather)
-
-        values = {"prior_text": output_text,
-                  "polly_voiceid": polly_voiceid,
-                  "twilio_asr_language": twilio_asr_language,
-                  "apiai_language": apiai_language,
-                  "prior_dialog_state": dialog_state
-                  }
-        qs2 = urllib.urlencode(values)
-        action_url = "/process_speech?" + qs2
-        resp.redirect(action_url)
-    print str(resp)
-    return str(resp), actualvalue
+        	output_text = prior_text
+        	dialog_state = prior_dialog_state
+        	values = {"prior_text": output_text,
+			  "polly_voiceid": polly_voiceid,
+			  "twilio_asr_language": twilio_asr_language,
+			  "apiai_language": apiai_language,
+			  "prior_dialog_state": dialog_state
+			 }
+		qs2 = urllib.urlencode(values)
+		action_url = "/process_speech?" + qs2
+		gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url, method="POST")
+		values = {"text": output_text,
+			  "polly_voiceid": polly_voiceid,
+			  "region": "us-east-1"
+			 }
+		qs1 = urllib.urlencode(values)
+		gather.play(hostname + 'polly_text2speech?' + qs1)
+		resp.append(gather)
+		
+		values = {"prior_text": output_text,
+			  "polly_voiceid": polly_voiceid,
+			  "twilio_asr_language": twilio_asr_language,
+			  "apiai_language": apiai_language,
+			  "prior_dialog_state": dialog_state
+			 }
+		qs2 = urllib.urlencode(values)
+		action_url = "/process_speech?" + qs2
+		resp.redirect(action_url)
+		print str(resp)
+	return str(resp), actualvalue
 
 #####
 ##### Google Api.ai - Text to Intent
