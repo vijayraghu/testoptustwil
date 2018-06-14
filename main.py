@@ -269,9 +269,9 @@ def getBalance(nickname, Accounttype):
         accountId = details[Vijay]['Savings']
 	print accountId
     elif Accounttype == 'Checking':
-        accountId = details['nickname']['Checking']
+        accountId = details[Vijay]['Checking']
     else:
-        accountId = details['nickname']['Credit Card']
+        accountId = details[Vijay]['Credit Card']
     url = 'http://api.reimaginebanking.com/accounts/{}?key={}'.format(accountId,apiKey)
     print url
     response = requests.get(url, headers={'content-type': 'application/json'})
