@@ -304,7 +304,8 @@ def polly_text2speech():
                 while data:
                     yield data
                     data = dmp3.read(1024)
-                    return Response(generate(), mimetype="audio/mpeg")
+	return Response(generate(), mimetype="audio/mpeg")
+
     else:
         # The response didn't contain audio data, exit gracefully
         print("Could not stream audio")
