@@ -247,13 +247,13 @@ def processRequest(req):
 	a, actualvalue = process_speech()
 	#Get Balance Amount for account from account id
 	if intentname == 'Account_Balance':
-        Balance = getBalance(actualvalue, accounttype)
+		Balance = getBalance(actualvalue, accounttype)
 		speech = 'Your ' + accounttype + ' account balance is ' + Balance + ' dollars'
 	else:
 		speech = 'You will be receiving a call on this number shortly'
 		return {'speech': speech,
-                'displayText': speech,
-                'source': 'apiai-account-sample'
+			'displayText': speech,
+			'source': 'apiai-account-sample'
 		       }
 	return res
 
