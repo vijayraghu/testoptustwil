@@ -234,12 +234,12 @@ def webhook():
 
 def processRequest(req):
 	result = req.get('result')
-    metadata = result.get('metadata')
-    intentname = metadata.get('intentName')
-    parameters = result.get('parameters')
-    actionname = parameters.get('action')
-    accounttype = parameters.get('type')
-    #custname = parameters.get('customername')
+    	metadata = result.get('metadata')
+    	intentname = metadata.get('intentName')
+    	parameters = result.get('parameters')
+    	actionname = parameters.get('action')
+    	accounttype = parameters.get('type')
+    	#custname = parameters.get('customername')
 	phoneNo = parameters.get('phonenumber')
 	payeename = parameters.get('transcustomername')
 	payeeaccounttype = parameters.get('transtype')
@@ -254,8 +254,8 @@ def processRequest(req):
 		return {'speech': speech,
                 'displayText': speech,
                 'source': 'apiai-account-sample'
-        }
-    return res
+		       }
+	return res
 
 #Helper function for Balance
 def getBalance(nickname, Accounttype):
