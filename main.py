@@ -22,7 +22,6 @@ import datetime
 apiai_client_access_key = os.environ["APIAPI_CLIENT_ACCESS_KEY"]
 aws_access_key_id = os.environ["AWS_ACCESS_KEY_ID"]
 aws_secret_key = os.environ["AWS_SECRET_KEY"]
-
 apiai_url = "https://api.api.ai/v1/query"
 apiai_querystring = {"v": "20150910"}
 registered_users = {"+914444461497": "Paul",
@@ -93,14 +92,14 @@ def start():
 #####
 @app.route('/process_speech', methods=['GET', 'POST'])
 def process_speech():
-	user_id = request.values.get('CallSid')
-	polly_voiceid = request.values.get('polly_voiceid', "Joanna")
-	twilio_asr_language = request.values.get('twilio_asr_language', "en-IN")
-	apiai_language = request.values.get('apiai_language', "en")
-	prior_text = request.values.get('prior_text', "Prior text missing")
-	prior_dialog_state = request.values.get('prior_dialog_state', "ElicitIntent")
-	input_text = request.values.get("SpeechResult", "")
-	confidence = float(request.values.get("Confidence", 0.0))
+    user_id = request.values.get('CallSid')
+    polly_voiceid = request.values.get('polly_voiceid', "Joanna")
+    twilio_asr_language = request.values.get('twilio_asr_language', "en-IN")
+    apiai_language = request.values.get('apiai_language', "en")
+    prior_text = request.values.get('prior_text', "Prior text missing")
+    prior_dialog_state = request.values.get('prior_dialog_state', "ElicitIntent")
+    input_text = request.values.get("SpeechResult", "")
+    confidence = float(request.values.get("Confidence", 0.0))
 	hostname = request.url_root
 	print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
 	actualvalue = re.findall(r'\b\d{3,16}\b', input_text)
@@ -111,36 +110,37 @@ def process_speech():
 	resp = VoiceResponse()
 	if (confidence > 0.5):
         # Step 1: Call Bot for intent analysis - API.AI Bot
-        	intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
-
+        intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
+        
         # Step 2: Construct TwiML
         if dialog_state in ['in-progress']:
-            	values = {"prior_text": output_text, "prior_dialog_state": dialog_state}
-            	qs2 = urllib.urlencode(values)
-            	action_url = "/process_speech?" + qs2
-            	gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url,method="POST")
-            	values = {"text": output_text,
-                    "polly_voiceid": polly_voiceid,
-                    "region": "us-east-1"
+            values = {"prior_text": output_text, "prior_dialog_state": dialog_state}
+            qs2 = urllib.urlencode(values)
+        	action_url = "/process_speech?" + qs2
+        	gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url,method="POST")
+        	values = {"text": output_text,
+                      "polly_voiceid": polly_voiceid,
+                      "region": "us-east-1"
             }
             qs1 = urllib.urlencode(values)
             gather.play(hostname + 'polly_text2speech?' + qs1)
             resp.append(gather)
-
-            # If gather is missing (no speech), redirect to process incomplete speech via the Bot
+            
+        # If gather is missing (no speech), redirect to process incomplete speech via the Bot
             values = {"prior_text": output_text,
                       "polly_voiceid": polly_voiceid,
                       "twilio_asr_language": twilio_asr_language,
                       "apiai_language": apiai_language,
                       "SpeechResult": "",
                       "Confidence": 0.0}
+            
             qs3 = urllib.urlencode(values)
             action_url = "/process_speech?" + qs3
             resp.redirect(action_url)
         elif dialog_state in ['complete']:
             values = {"text": output_text,
-                    "polly_voiceid": polly_voiceid,
-                    "region": "us-east-1"
+                      "polly_voiceid": polly_voiceid,
+                      "region": "us-east-1"
             }
             qs = urllib.urlencode(values)
             resp.play(hostname + 'polly_text2speech?' + qs)
@@ -224,13 +224,13 @@ def apiai_text_to_intent(apiapi_client_access_key, input_text, user_id, language
 def webhook():
 	req = request.get_json(silent=True, force=True)
 	print 'Request:'
-    	print json.dumps(req, indent=4)
-    	res = processRequest(req)
-    	res = json.dumps(res, indent=4)
-    	# print(res)
-    	r = make_response(res)
-    	r.headers['Content-Type'] = 'application/json'
-    	return r
+    print json.dumps(req, indent=4)
+    res = processRequest(req)
+    res = json.dumps(res, indent=4)
+    # print(res)
+    r = make_response(res)
+    r.headers['Content-Type'] = 'application/json'
+    return r
 
 def processRequest(req):
 	result = req.get('result')
@@ -247,35 +247,36 @@ def processRequest(req):
 	a, actualvalue = process_speech()
 	#Get Balance Amount for account from account id
 	if intentname == 'Account_Balance':
-		Balance = getBalance(actualvalue, accounttype)
+        Balance = getBalance(actualvalue, accounttype)
 		speech = 'Your ' + accounttype + ' account balance is ' + Balance + ' dollars'
 	else:
 		speech = 'You will be receiving a call on this number shortly'
-		return {'speech': speech, 
-		'displayText': speech, 
-		'source': 'apiai-account-sample'}  # "data": data, # "contextOut": [],
-    	return res
+		return {'speech': speech,
+                'displayText': speech,
+                'source': 'apiai-account-sample'
+        }
+    return res
 
 #Helper function for Balance
 def getBalance(nickname, Accounttype):
     with open('details.json') as json_file:
 	details = json.load(json_file)
-       	apiKey = os.environ.get('NESSIE_API_KEY')
-       	print apiKey
-       	if Accounttype == 'Savings':
-		accountId = details[nickname]['Savings']
-       	elif Accounttype == 'Checking':
-			accountId = details[nickname]['Checking']
-       	else:
-            accountId = details[nickname]['Credit Card']
-        url = 'http://api.reimaginebanking.com/accounts/{}?key={}'.format(accountId,apiKey)
-        print url
-        response = requests.get(url, headers={'content-type': 'application/json'})
-        result = response.json()
-        #print result
-        accountbalance = result[u'balance']
-        Balance = str(accountbalance)
-        return Balance
+    apiKey = os.environ.get('NESSIE_API_KEY')
+    print apiKey
+    if Accounttype == 'Savings':
+        accountId = details[nickname]['Savings']
+    elif Accounttype == 'Checking':
+        accountId = details[nickname]['Checking']
+    else:
+        accountId = details[nickname]['Credit Card']
+    url = 'http://api.reimaginebanking.com/accounts/{}?key={}'.format(accountId,apiKey)
+    print url
+    response = requests.get(url, headers={'content-type': 'application/json'})
+    result = response.json()
+    #print result
+    accountbalance = result[u'balance']
+    Balance = str(accountbalance)
+    return Balance
 
 #####
 ##### AWS Polly for Text to Speech
@@ -303,7 +304,7 @@ def polly_text2speech():
                 while data:
                     yield data
                     data = dmp3.read(1024)
-        return Response(generate(), mimetype="audio/mpeg")
+                    return Response(generate(), mimetype="audio/mpeg")
     else:
         # The response didn't contain audio data, exit gracefully
         print("Could not stream audio")
