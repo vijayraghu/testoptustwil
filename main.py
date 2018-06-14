@@ -239,12 +239,12 @@ def processRequest(req):
     	parameters = result.get('parameters')
     	actionname = parameters.get('action')
     	accounttype = parameters.get('type')
-    	#custname = parameters.get('customername')
+    	actualvalue = parameters.get('customername')
 	phoneNo = parameters.get('phonenumber')
 	payeename = parameters.get('transcustomername')
 	payeeaccounttype = parameters.get('transtype')
 	payeeamount = parameters.get('amount')
-	a, actualvalue = process_speech()
+	#a, actualvalue = process_speech()
 	#Get Balance Amount for account from account id
 	if intentname == 'Account_Balance':
 		Balance = getBalance(actualvalue, accounttype)
