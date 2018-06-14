@@ -92,14 +92,14 @@ def start():
 #####
 @app.route('/process_speech', methods=['GET', 'POST'])
 def process_speech():
-    user_id = request.values.get('CallSid')
-    polly_voiceid = request.values.get('polly_voiceid', "Joanna")
-    twilio_asr_language = request.values.get('twilio_asr_language', "en-IN")
-    apiai_language = request.values.get('apiai_language', "en")
-    prior_text = request.values.get('prior_text', "Prior text missing")
-    prior_dialog_state = request.values.get('prior_dialog_state', "ElicitIntent")
-    input_text = request.values.get("SpeechResult", "")
-    confidence = float(request.values.get("Confidence", 0.0))
+    	user_id = request.values.get('CallSid')
+    	polly_voiceid = request.values.get('polly_voiceid', "Joanna")
+    	twilio_asr_language = request.values.get('twilio_asr_language', "en-IN")
+    	apiai_language = request.values.get('apiai_language', "en")
+    	prior_text = request.values.get('prior_text', "Prior text missing")
+    	prior_dialog_state = request.values.get('prior_dialog_state', "ElicitIntent")
+    	input_text = request.values.get("SpeechResult", "")
+    	confidence = float(request.values.get("Confidence", 0.0))
 	hostname = request.url_root
 	print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
 	actualvalue = re.findall(r'\b\d{3,16}\b', input_text)
