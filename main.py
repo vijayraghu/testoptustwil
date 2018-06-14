@@ -265,7 +265,7 @@ def getBalance(nickname, Accounttype):
     apiKey = os.environ.get('NESSIE_API_KEY')
     print apiKey, nickname
 	
-    if Accounttype == 'Savings' && nickname == '12345678':
+    if Accounttype == 'Savings' and nickname == '12345678':
         accountId = details[Vijay]['Savings']
 	print accountId
     elif Accounttype == 'Checking':
