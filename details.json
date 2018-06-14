@@ -2,7 +2,7 @@
   "name": "details",
   "description": "user id details",
   "key": "0d1e4dba73af6a9c4a117e9ad937a517",
-  "12345678": {
+  "Vijay": {
     "cust_id": "5818a0b3360f81f1045476af",
     "Savings": "5818a8a2360f81f1045476b1",
     "Credit Card": "5818a9ae360f81f1045476b2",
@@ -16,11 +16,11 @@
   },
   "users" : [
     {
-      "name" : "12345678",
-      "nickname" : "12345678"
+      "name" : "Vijay",
+      "nickname" : "Vijay"
     },
     {
-      "name" : "98765432",
+      "name" : "Sriram",
       "nickname" : "Sriram"
     }
   ]
