@@ -93,33 +93,33 @@ def start():
 #####
 @app.route('/process_speech', methods=['GET', 'POST'])
 def process_speech():
-    user_id = request.values.get('CallSid')
-    polly_voiceid = request.values.get('polly_voiceid', "Joanna")
-    twilio_asr_language = request.values.get('twilio_asr_language', "en-IN")
-    apiai_language = request.values.get('apiai_language', "en")
-    prior_text = request.values.get('prior_text', "Prior text missing")
-    prior_dialog_state = request.values.get('prior_dialog_state', "ElicitIntent")
-    input_text = request.values.get("SpeechResult", "")
+	user_id = request.values.get('CallSid')
+	polly_voiceid = request.values.get('polly_voiceid', "Joanna")
+	twilio_asr_language = request.values.get('twilio_asr_language', "en-IN")
+	apiai_language = request.values.get('apiai_language', "en")
+	prior_text = request.values.get('prior_text', "Prior text missing")
+	prior_dialog_state = request.values.get('prior_dialog_state', "ElicitIntent")
+	input_text = request.values.get("SpeechResult", "")
 	confidence = float(request.values.get("Confidence", 0.0))
-    hostname = request.url_root
-    print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
+	hostname = request.url_root
+	print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
 	actualvalue = re.findall(r'\b\d{3,16}\b', input_text)
 	input_text = re.sub(r'\b\d{3,16}\b','1111111', input_text)
 	print(input_text)
-    sys.stdout.flush()
-
-    resp = VoiceResponse()
-    if (confidence > 0.5):
+	sys.stdout.flush()
+	
+	resp = VoiceResponse()
+	if (confidence > 0.5):
         # Step 1: Call Bot for intent analysis - API.AI Bot
-        intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
+        	intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
 
         # Step 2: Construct TwiML
         if dialog_state in ['in-progress']:
-            values = {"prior_text": output_text, "prior_dialog_state": dialog_state}
-            qs2 = urllib.urlencode(values)
-            action_url = "/process_speech?" + qs2
-            gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url,method="POST")
-            values = {"text": output_text,
+            	values = {"prior_text": output_text, "prior_dialog_state": dialog_state}
+            	qs2 = urllib.urlencode(values)
+            	action_url = "/process_speech?" + qs2
+            	gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url,method="POST")
+            	values = {"text": output_text,
                     "polly_voiceid": polly_voiceid,
                     "region": "us-east-1"
             }
