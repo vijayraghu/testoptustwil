@@ -240,6 +240,7 @@ def processRequest(req):
     	actionname = parameters.get('action')
     	accounttype = parameters.get('type')
     	actualvalue = parameters.get('accnum')
+	print actualvalue
 	phoneNo = parameters.get('phonenumber')
 	payeename = parameters.get('transcustomername')
 	payeeaccounttype = parameters.get('transtype')
@@ -258,17 +259,17 @@ def processRequest(req):
 	return res
 
 #Helper function for Balance
-def getBalance(actualvalue, Accounttype):
+def getBalance(nickname, Accounttype):
     with open('details.json') as json_file:
 	details = json.load(json_file)
     apiKey = os.environ.get('NESSIE_API_KEY')
     print apiKey
     if Accounttype == 'Savings':
-        accountId = details[actualvalue]['Savings']
+        accountId = details[nickname]['Savings']
     elif Accounttype == 'Checking':
-        accountId = details[actualvalue]['Checking']
+        accountId = details[nickname]['Checking']
     else:
-        accountId = details[actualvalue]['Credit Card']
+        accountId = details[nickname]['Credit Card']
     url = 'http://api.reimaginebanking.com/accounts/{}?key={}'.format(accountId,apiKey)
     print url
     response = requests.get(url, headers={'content-type': 'application/json'})
