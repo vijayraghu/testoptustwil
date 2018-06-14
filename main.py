@@ -265,12 +265,12 @@ def getBalance(nickname, Accounttype):
     apiKey = os.environ.get('NESSIE_API_KEY')
     print apiKey, nickname
     if Accounttype == 'Savings':
-        accountId = details[nickname]['Savings']
+        accountId = details['nickname']['Savings']
 	print accountId
     elif Accounttype == 'Checking':
-        accountId = details[nickname]['Checking']
+        accountId = details['nickname']['Checking']
     else:
-        accountId = details[nickname]['Credit Card']
+        accountId = details['nickname']['Credit Card']
     url = 'http://api.reimaginebanking.com/accounts/{}?key={}'.format(accountId,apiKey)
     print url
     response = requests.get(url, headers={'content-type': 'application/json'})
