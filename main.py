@@ -107,6 +107,8 @@ def process_speech():
 		actualvalue = actual[0]
 		input_text = re.sub(r'\b\d{3,16}\b','1111111', input_text)
 		print(input_text, actualvalue)
+	else:
+		actualvalue = None
 	sys.stdout.flush()
 	
 	resp = VoiceResponse()
