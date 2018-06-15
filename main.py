@@ -24,8 +24,8 @@ aws_access_key_id = os.environ["AWS_ACCESS_KEY_ID"]
 aws_secret_key = os.environ["AWS_SECRET_KEY"]
 apiai_url = "https://api.api.ai/v1/query"
 apiai_querystring = {"v": "20150910"}
-registered_users = {"+914444461497": "Paul",
-                   "+914444462805": "Peter"
+registered_users = {"+919840610434": "Vijay",
+                   "+914444461324": "Vijay"
 }
 # Adjust the hints for improved Speech to Text
 hints = "1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, account acount akount, january, february, march, april, may, june, july, august, september, october, november, december"
@@ -239,13 +239,13 @@ def processRequest(req):
     	parameters = result.get('parameters')
     	actionname = parameters.get('action')
     	accounttype = parameters.get('type')
-    	actualvalue = parameters.get('accnum')
-	print actualvalue
+    	#actualvalue = parameters.get('accnum')
 	phoneNo = parameters.get('phonenumber')
 	payeename = parameters.get('transcustomername')
 	payeeaccounttype = parameters.get('transtype')
 	payeeamount = parameters.get('amount')
-	#a, actualvalue = process_speech()
+	a, actualvalue = process_speech()
+	print actualvalue
 	#Get Balance Amount for account from account id
 	if intentname == 'Account_Balance':
 		Balance = getBalance(actualvalue, accounttype)
