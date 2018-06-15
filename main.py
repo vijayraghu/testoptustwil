@@ -189,7 +189,7 @@ def process_speech():
 		qs2 = urllib.urlencode(values)
 		action_url = "/process_speech?" + qs2
 		resp.redirect(action_url)
-		print str(resp)
+		print 'Resp:' + str(resp)
 	return str(resp), actualvalue
 
 #####
