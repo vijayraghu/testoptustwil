@@ -107,15 +107,16 @@ def process_speech():
 		actual = re.findall(r'\b\d{3,16}\b', input_text)
 		actvalue = actual[0]
 		revact = actvalue[::-1]
-		input_text = re.sub(r'\b\d{3,16}\b',revact, input_text)
-		print input_text
+		input_text1 = re.sub(r'\b\d{3,16}\b',revact, input_text)
+		print input_text1
 	else:
+		input_text1 = input_text
 	sys.stdout.flush()
 	
 	resp = VoiceResponse()
 	if (confidence > 0.5):
 		# Step 1: Call Bot for intent analysis - API.AI Bot
-		intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
+		intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text1, user_id, apiai_language)
         
         	# Step 2: Construct TwiML
         	if dialog_state in ['in-progress']:
