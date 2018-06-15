@@ -246,7 +246,7 @@ def processRequest(req):
     	parameters = result.get('parameters')
     	actionname = parameters.get('action')
     	accounttype = parameters.get('type')
-    	accno = parameters.get('accnum')
+    	str(accno) = parameters.get('accnum')
 	accountnumber = accno[::-1]
 	print 'Actual value:'+ accountnumber
 	phoneNo = parameters.get('phonenumber')
