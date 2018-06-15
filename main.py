@@ -107,7 +107,7 @@ def process_speech():
 		actual = re.findall(r'\b\d{3,16}\b', input_text)
 		actvalue = actual[0]
 		revact = actvalue[::-1]
-		input_text1 = re.sub(r'\b\d{3,16}\b',revact, input_text)
+		input_text1 = re.sub(r'\b\d{3,16}\b', revact, input_text)
 		print input_text1
 	else:
 		input_text1 = input_text
