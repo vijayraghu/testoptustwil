@@ -104,7 +104,7 @@ def process_speech():
 	print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
 	actualvalue = re.findall(r'\b\d{3,16}\b', input_text)
 	input_text = re.sub(r'\b\d{3,16}\b','1111111', input_text)
-	print(input_text)
+	print(input_text, actualvalue)
 	sys.stdout.flush()
 	
 	resp = VoiceResponse()
@@ -244,7 +244,7 @@ def processRequest(req):
 	payeename = parameters.get('transcustomername')
 	payeeaccounttype = parameters.get('transtype')
 	payeeamount = parameters.get('amount')
-	a, actualvalue = process_speech()
+	actualvalue = process_speech()
 	print actualvalue
 	#Get Balance Amount for account from account id
 	if intentname == 'Account_Balance':
