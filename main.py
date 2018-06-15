@@ -109,6 +109,7 @@ def process_speech():
 		revact = actvalue[::-1]
 		input_text = re.sub(r'\b\d{3,16}\b',revact, input_text)
 		print input_text
+	else:
 	sys.stdout.flush()
 	
 	resp = VoiceResponse()
