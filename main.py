@@ -103,14 +103,13 @@ def process_speech():
     	confidence = float(request.values.get("Confidence", 0.0))
 	hostname = request.url_root
 	print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
+	#Swapping the value if it has PII data
 	if re.search(r'\b\d{3,16}\b', input_text):
-		actual = re.findall(r'\b\d{3,16}\b', input_text)
-		actualvalue = actual[0]
+		actualvalue = swap(input_text)
+		#actual = re.findall(r'\b\d{3,16}\b', input_text)
+		#actualvalue = actual[0]
 		input_text = re.sub(r'\b\d{3,16}\b','1111111', input_text)
-		print(input_text, actualvalue)
-	else:
-		print('In else condition')
-		actualvalue = None
+		print(input_text)
 	sys.stdout.flush()
 	
 	resp = VoiceResponse()
@@ -190,7 +189,7 @@ def process_speech():
 		action_url = "/process_speech?" + qs2
 		resp.redirect(action_url)
 		print 'Resp:' + str(resp)
-	return str(resp), actualvalue
+	return str(resp)
 
 #####
 ##### Google Api.ai - Text to Intent
@@ -225,6 +224,15 @@ def apiai_text_to_intent(apiapi_client_access_key, input_text, user_id, language
     return intent_stage, output_text, dialog_state
 
 #####
+##### Handling sensitive data
+#####
+def swap(input_text):
+	actual = re.findall(r'\b\d{3,16}\b', input_text)
+	actualvalue = actual[0]
+	print(actualvalue)
+	return actualvalue
+	
+#####
 ##### API.API fulfillment webhook (You can enable this in API.AI console)
 #####
 @app.route('/webhook', methods=['POST'])
@@ -251,8 +259,8 @@ def processRequest(req):
 	payeename = parameters.get('transcustomername')
 	payeeaccounttype = parameters.get('transtype')
 	payeeamount = parameters.get('amount')
-	str1,actualvalue = process_speech()
-	print actualvalue
+	actualvalue = swap()
+	print 'Actual value:'+ actualvalue
 	#Get Balance Amount for account from account id
 	if intentname == 'Account_Balance':
 		Balance = getBalance(actualvalue, accounttype)
