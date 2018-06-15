@@ -103,7 +103,7 @@ def process_speech():
 	hostname = request.url_root
 	print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
 	actual = re.findall(r'\b\d{3,16}\b', input_text)
-	actualvalue = [str(actual[0])]
+	actualvalue = actual[0]
 	input_text = re.sub(r'\b\d{3,16}\b','1111111', input_text)
 	print(input_text, actualvalue)
 	sys.stdout.flush()
