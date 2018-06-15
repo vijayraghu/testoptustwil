@@ -92,7 +92,7 @@ def start():
 #####
 @app.route('/process_speech', methods=['GET', 'POST'])
 def process_speech():
-	actualvalue = ''
+	#actualvalue = ''
     	user_id = request.values.get('CallSid')
     	polly_voiceid = request.values.get('polly_voiceid', "Joanna")
     	twilio_asr_language = request.values.get('twilio_asr_language', "en-IN")
@@ -110,7 +110,7 @@ def process_speech():
 		print(input_text, actualvalue)
 	else:
 		print('In else condition')
-		actualvalue = ''
+		actualvalue = None
 	sys.stdout.flush()
 	
 	resp = VoiceResponse()
