@@ -28,7 +28,7 @@ registered_users = {"+919840610434": "Vijay",
                    "+914444461324": "Vijay"
 }
 # Adjust the hints for improved Speech to Text
-#hints = "1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, account acount akount, january, february, march, april, may, june, july, august, september, october, november, december"
+hints = "1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, account acount akount, january, february, march, april, may, june, july, august, september, october, november, december"
 
 app = Flask(__name__)
 
