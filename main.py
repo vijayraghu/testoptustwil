@@ -92,8 +92,7 @@ def start():
 #####
 @app.route('/process_speech', methods=['GET', 'POST'])
 def process_speech():
-	#actualvalue = ''
-    	user_id = request.values.get('CallSid')
+	user_id = request.values.get('CallSid')
     	polly_voiceid = request.values.get('polly_voiceid', "Joanna")
     	twilio_asr_language = request.values.get('twilio_asr_language', "en-IN")
     	apiai_language = request.values.get('apiai_language', "en")
@@ -102,14 +101,11 @@ def process_speech():
     	input_text = request.values.get("SpeechResult", "")
     	confidence = float(request.values.get("Confidence", 0.0))
 	hostname = request.url_root
-	print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
+	print "Twilio Speech to Text: " + 
+	+ " Confidence: " + str(confidence)
 	#Swapping the value if it has PII data
-	if re.search(r'\b\d{3,16}\b', input_text):
-		actualvalue = swap(input_text)
-		#actual = re.findall(r'\b\d{3,16}\b', input_text)
-		#actualvalue = actual[0]
-		input_text = re.sub(r'\b\d{3,16}\b','1111111', input_text)
-		print(input_text)
+	actualvalue, input_text = swap(input_text)
+	print actualvalue, input_text
 	sys.stdout.flush()
 	
 	resp = VoiceResponse()
@@ -189,7 +185,7 @@ def process_speech():
 		action_url = "/process_speech?" + qs2
 		resp.redirect(action_url)
 		print 'Resp:' + str(resp)
-	return str(resp)
+	return str(resp), actualvalue
 
 #####
 ##### Google Api.ai - Text to Intent
@@ -227,11 +223,13 @@ def apiai_text_to_intent(apiapi_client_access_key, input_text, user_id, language
 ##### Handling sensitive data
 #####
 def swap(input_text):
-	actual = re.findall(r'\b\d{3,16}\b', input_text)
-	actualvalue = actual[0]
-	print(actualvalue)
-	return actualvalue
-	
+	if re.search(r'\b\d{3,16}\b', input_text):
+		actual = re.findall(r'\b\d{3,16}\b', input_text)
+		actvalue = actual[0]
+		input_text = re.sub(r'\b\d{3,16}\b','1111111', input_text)
+		print(input_text, actvalue)
+	return actvalue, input_text
+
 #####
 ##### API.API fulfillment webhook (You can enable this in API.AI console)
 #####
@@ -259,7 +257,7 @@ def processRequest(req):
 	payeename = parameters.get('transcustomername')
 	payeeaccounttype = parameters.get('transtype')
 	payeeamount = parameters.get('amount')
-	actualvalue = swap(input_text)
+	a, actualvalue = swap(input_text)
 	print 'Actual value:'+ actualvalue
 	#Get Balance Amount for account from account id
 	if intentname == 'Account_Balance':
