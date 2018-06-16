@@ -109,6 +109,7 @@ def process_speech():
 		print input_text1
 	else:
 		input_text1 = input_text
+		print input_text1
 	sys.stdout.flush()
 	
 	resp = VoiceResponse()
