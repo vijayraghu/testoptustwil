@@ -113,7 +113,7 @@ def process_speech():
 	sys.stdout.flush()
 	
 	resp = VoiceResponse()
-	if (confidence > 0.5):
+	if (confidence >= 0.0):
 		# Step 1: Call Bot for intent analysis - API.AI Bot
 		intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text1, user_id, apiai_language)
         
