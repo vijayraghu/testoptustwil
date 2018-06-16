@@ -199,7 +199,7 @@ def apiai_text_to_intent(apiapi_client_access_key, input_text1, user_id, languag
         'authorization': "Bearer " + apiapi_client_access_key,
         'content-type': "application/json"
     }
-    payload = {'query': input_text,
+    payload = {'query': input_text1,
                'lang': language,
                'sessionId': user_id
     }
