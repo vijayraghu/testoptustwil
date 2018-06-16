@@ -104,10 +104,8 @@ def process_speech():
 	print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
 	#Swapping the value if it has PII data
 	if re.search(r'\b\d{3,16}\b', input_text):
-		actual = re.findall(r'\b\d{3,16}\b', input_text)
-		actvalue = actual[0]
-		revact = actvalue[::-1]
-		input_text1 = re.sub(r'\b\d{3,16}\b', revact, input_text)
+		input_text1 = swap(input_text)
+		input_text1 = re.sub(r'\b\d{3,16}\b', revact, input_text1)
 		print input_text1
 	else:
 		input_text1 = input_text
@@ -196,7 +194,7 @@ def process_speech():
 ##### Google Api.ai - Text to Intent
 #####
 #@app.route('/apiai_text_to_intent', methods=['GET', 'POST'])
-def apiai_text_to_intent(apiapi_client_access_key, input_text, user_id, language):
+def apiai_text_to_intent(apiapi_client_access_key, input_text1, user_id, language):
     headers = {
         'authorization': "Bearer " + apiapi_client_access_key,
         'content-type': "application/json"
@@ -225,6 +223,16 @@ def apiai_text_to_intent(apiapi_client_access_key, input_text, user_id, language
     return intent_stage, output_text, dialog_state
 
 #####
+##### Reversing Function
+#####
+def swap(text)
+	actual = re.findall(r'\b\d{3,16}\b', text)
+	actvalue = actual[0]
+	revact = actvalue[::-1]
+	print revact
+	return revact
+
+#####
 ##### API.API fulfillment webhook (You can enable this in API.AI console)
 #####
 @app.route('/webhook', methods=['POST'])
@@ -247,9 +255,9 @@ def processRequest(req):
     	actionname = parameters.get('action')
     	accounttype = parameters.get('type')
     	accno = parameters.get('accnum')
-	acc = str(accno)
-	accountnumber = acc[::-1]
-	print 'Actual value:'+ accountnumber
+	acc = swap(accno)
+	#accountnumber = acc[::-1]
+	print 'Actual value:'+ acc
 	phoneNo = parameters.get('phonenumber')
 	payeename = parameters.get('transcustomername')
 	payeeaccounttype = parameters.get('transtype')
