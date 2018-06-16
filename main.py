@@ -255,7 +255,8 @@ def processRequest(req):
     	actionname = parameters.get('action')
     	accounttype = parameters.get('type')
     	accno = parameters.get('accnum')
-	acc = swap(accno)
+	accnumb = str(accno)
+	acc = swap(accnumb)
 	#accountnumber = acc[::-1]
 	print 'Actual value:'+ acc
 	phoneNo = parameters.get('phonenumber')
