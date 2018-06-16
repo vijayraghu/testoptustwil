@@ -104,6 +104,7 @@ def process_speech():
 	print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
 	#Swapping the value if it has PII data
 	if re.search(r'\b\d{3,16}\b', input_text):
+		input_text = re.sub('(?<=\d) (?=\d)', '', input_text)
 		input_text1 = swap(input_text)
 		input_text1 = re.sub(r'\b\d{3,16}\b', revact, input_text1)
 		print input_text1
