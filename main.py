@@ -196,7 +196,7 @@ def process_speech():
 ##### Google Api.ai - Text to Intent
 #####
 #@app.route('/apiai_text_to_intent', methods=['GET', 'POST'])
-def apiai_text_to_intent(apiapi_client_access_key, input_text1, user_id, language):
+def apiai_text_to_intent(apiapi_client_access_key, input_text, user_id, language):
     headers = {
         'authorization': "Bearer " + apiapi_client_access_key,
         'content-type': "application/json"
