@@ -162,7 +162,7 @@ def process_speech():
         action_url = '/process_speech?' + qs2
         resp.redirect(action_url)
         print 'Resp:' + str(resp)
-     return str(resp)
+        return str(resp)
 
 #####
 ##### Google Api.ai - Text to Intent
