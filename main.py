@@ -103,7 +103,7 @@ def process_speech():
     if re.search(r'\b\d{1,16}\b', input_text):
         input_text = re.sub('(?<=\d) (?=\d)', '', input_text)
         input_text1 = swap(input_text)
-        input_text1 = re.sub(r'\b\d{3,16}\b', input_text, input_text1)
+        input_text1 = re.sub(r'\b\d{1,16}\b', input_text, input_text1)
         print "Changed input: " + input_text1
     else:
         input_text1 = input_text
