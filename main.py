@@ -89,6 +89,7 @@ def start():
 @app.route('/process_speech', methods=['GET', 'POST'])
 def process_speech():
     user_id = request.values.get('CallSid')
+    polly_voiceid = request.values.get('polly_voiceid', "Joanna")
     twilio_asr_language = request.values.get('twilio_asr_language', 'en-IN')
     apiai_language = request.values.get('apiai_language', 'en')
     prior_text = request.values.get('prior_text', 'Prior text missing')
