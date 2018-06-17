@@ -277,33 +277,25 @@ def processRequest(req):
     actionname = parameters.get('action')
     accounttype = parameters.get('type')
     accno = parameters.get('accnum')
-    accnumb = str(accno)
-    accountnumber = swap(accnumb)
-
-    # accountnumber = acc[::-1]
-
-    print 'Account number:' + accountnumber
     phoneNo = parameters.get('phonenumber')
     payeeacc = parameters.get('transcustomername')
-    payeeaccnumb = str(payeeacc)
-    payeeaccountnumber = swap(payeeaccnumb)
-    print 'Payee Account number:' + payeeaccountnumber
     payeeaccounttype = parameters.get('transtype')
     amount = parameters.get('amount')
-    xferamount = str(amount)
-    transferamount = swap(xferamount)
-    print 'Transfer amount:' + transferamount
 
     # Get Balance Amount for account from account id
-
     if intentname == 'Account_Balance':
+        accnumb = str(accno)
+        accountnumber = swap(accnumb)
+        print 'Account number:' + accountnumber
         Balance = getBalance(accountnumber, accounttype)
         speech = 'Your ' + accounttype + ' account balance is ' \
             + Balance + ' dollars'
-    elif intentname == 'Last_transfer':
-
+        
     # Get Last transfer for account from account id
-
+    elif intentname == 'Last_transfer':
+        accnumb = str(accno)
+        accountnumber = swap(accnumb)
+        print 'Account number:' + accountnumber
         lasttransfer = getLasttransfer(accountnumber, accounttype)
         Amount = result[0][u'amount']
         Transferamount = str(Amount)
@@ -314,7 +306,9 @@ def processRequest(req):
     elif intentname == 'Last_purchase':
 
     # Get Last purchase for account from account id
-
+        accnumb = str(accno)
+        accountnumber = swap(accnumb)
+        print 'Account number:' + accountnumber
         lastpurchase = getLastpurchase(accountnumber, accounttype)
         Amount = result[0][u'amount']
         Transferamount = str(Amount)
@@ -325,9 +319,17 @@ def processRequest(req):
     elif intentname == 'Transfer_funds':
 
     # Transfer funds through account id
-
+        accnumb = str(accno)
+        accountnumber = swap(accnumb)
+        print 'Account number:' + accountnumber
+        payeeaccnumb = str(payeeacc)
+        payeeaccountnumber = swap(payeeaccnumb)
+        print 'Payee Account number:' + payeeaccountnumber
+        xferamount = str(amount)
+        transferamount = swap(xferamount)
+        print 'Transfer amount:' + transferamount
         result = createTransfer(accountnumber, accounttype, payeename,
-                                payeeaccounttype, payeeamount)
+                                payeeaccounttype, transferamount)
         responsecode = result[u'code']
         transId = result[u'objectCreated'][u'_id']
         if responsecode == 201:
