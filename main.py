@@ -161,18 +161,16 @@ def process_speech():
             resp.hangup()
             
     else:
-
         # We didn't get STT of higher confidence, replay the prior conversation
         output_text = prior_text
         dialog_state = prior_dialog_state
-        values = {'prior_text': output_text,  
-                  'polly_voiceid': polly_voiceid, 
-                  'twilio_asr_language': twilio_asr_language, 
-                  'apiai_language': apiai_language, 
-                  'prior_dialog_state': dialog_state
-                 }
+        values = {"prior_text": output_text,
+                  "polly_voiceid": polly_voiceid,
+                  "twilio_asr_language": twilio_asr_language,
+                  "apiai_language": apiai_language,
+                  "prior_dialog_state": dialog_state}
         qs2 = urllib.urlencode(values)
-        action_url = '/process_speech?' + qs2
+        action_url = "/process_speech?" + qs2
         gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url, method="POST")
         values = {"text": output_text,
                   "polly_voiceid": polly_voiceid,
@@ -181,18 +179,18 @@ def process_speech():
         qs1 = urllib.urlencode(values)
         gather.play(hostname + 'polly_text2speech?' + qs1)
         resp.append(gather)
-        
-        values = {'prior_text': output_text, 
+
+        values = {"prior_text": output_text,
                   "polly_voiceid": polly_voiceid,
-                  'twilio_asr_language': twilio_asr_language, 
-                  'apiai_language': apiai_language, 
-                  'prior_dialog_state': dialog_state
-                 }
+                  "twilio_asr_language": twilio_asr_language,
+                  "apiai_language": apiai_language,
+                  "prior_dialog_state": dialog_state
+                  }
         qs2 = urllib.urlencode(values)
-        action_url = '/process_speech?' + qs2
+        action_url = "/process_speech?" + qs2
         resp.redirect(action_url)
-        print 'Resp:' + str(resp)
-        return str(resp)
+    print str(resp)
+    return str(resp)
 
 #####
 ##### Google Api.ai - Text to Intent
