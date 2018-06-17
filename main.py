@@ -69,8 +69,8 @@ def start():
         language=twilio_asr_language,
         timeout='3',
         action=action_url,
-        method='POST',
-        )
+        method='POST'
+    )
 
     # TTS the bot response
 
@@ -79,13 +79,12 @@ def start():
 
     # If gather is missing (no speech), redirect to process speech again
 
-    values = {  # "polly_voiceid": polly_voiceid,
-        'prior_text': output_text,
-        'twilio_asr_language': twilio_asr_language,
-        'apiai_language': apiai_language,
-        'SpeechResult': '',
-        'Confidence': 0.0,
-        }
+    values = {'prior_text': output_text,
+              'twilio_asr_language': twilio_asr_language,
+              'apiai_language': apiai_language,
+              'SpeechResult': '',
+              'Confidence': 0.0
+             }
     qs = urllib.urlencode(values)
     action_url = '/process_speech?' + qs
     resp.redirect(action_url)
@@ -148,8 +147,8 @@ def process_speech():
                 language=twilio_asr_language,
                 timeout='3',
                 action=action_url,
-                method='POST',
-                )
+                method='POST'
+            )
             gather.say(output_text, voice='alice', language='en-IN')
             resp.append(gather)
 
@@ -160,7 +159,7 @@ def process_speech():
                 'twilio_asr_language': twilio_asr_language,
                 'apiai_language': apiai_language,
                 'SpeechResult': '',
-                'Confidence': 0.0,
+                'Confidence': 0.0
                 }
             qs3 = urllib.urlencode(values)
             action_url = '/process_speech?' + qs3
@@ -182,7 +181,7 @@ def process_speech():
             'prior_text': output_text,
             'twilio_asr_language': twilio_asr_language,
             'apiai_language': apiai_language,
-            'prior_dialog_state': dialog_state,
+            'prior_dialog_state': dialog_state
             }
         qs2 = urllib.urlencode(values)
         action_url = '/process_speech?' + qs2
@@ -192,8 +191,8 @@ def process_speech():
             language=twilio_asr_language,
             timeout='3',
             action=action_url,
-            method='POST',
-            )
+            method='POST'
+        )
         gather.say(output_text, voice='alice', language='en-IN')
         resp.append(gather)
 
@@ -201,7 +200,7 @@ def process_speech():
             'prior_text': output_text,
             'twilio_asr_language': twilio_asr_language,
             'apiai_language': apiai_language,
-            'prior_dialog_state': dialog_state,
+            'prior_dialog_state': dialog_state
             }
         qs2 = urllib.urlencode(values)
         action_url = '/process_speech?' + qs2
