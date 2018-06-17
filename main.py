@@ -105,12 +105,12 @@ def process_speech():
 	
 	resp = VoiceResponse()
 	if (confidence >= 0.0):
-        
+		
 		# Step 1: Call Bot for intent analysis - API.AI Bot
 		intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text1, user_id, apiai_language)
         
         	# Step 2: Construct TwiML
-        	if dialog_state in ['in-progress']:
+        if dialog_state in ['in-progress']:
 			values = {"prior_text": output_text, "prior_dialog_state": dialog_state}
 			qs2 = urllib.urlencode(values)
 			action_url = "/process_speech?" + qs2
@@ -119,16 +119,17 @@ def process_speech():
 			resp.append(gather)
             
         # If gather is missing (no speech), redirect to process incomplete speech via the Bot
-           		values = {"prior_text": output_text,
-				  #"polly_voiceid": polly_voiceid,
-				  "twilio_asr_language": twilio_asr_language,
-				  "apiai_language": apiai_language,
-				  "SpeechResult": "",
-				  "Confidence": 0.0
-				 }
+           	values = {"prior_text": output_text,
+					  #"polly_voiceid": polly_voiceid,
+					  "twilio_asr_language": twilio_asr_language,
+					  "apiai_language": apiai_language,
+					  "SpeechResult": "",
+					  "Confidence": 0.0
+					 }
 			qs3 = urllib.urlencode(values)
 			action_url = "/process_speech?" + qs3
 			resp.redirect(action_url)
+				
 		elif dialog_state in ['complete']:
             resp.say(output_text, voice='alice', language='en-IN')
 			resp.hangup()
@@ -140,11 +141,11 @@ def process_speech():
         output_text = prior_text
         dialog_state = prior_dialog_state
         values = {"prior_text": output_text,
-			  #"polly_voiceid": polly_voiceid,
-			  "twilio_asr_language": twilio_asr_language,
-			  "apiai_language": apiai_language,
-			  "prior_dialog_state": dialog_state
-			 }
+				  #"polly_voiceid": polly_voiceid,
+				  "twilio_asr_language": twilio_asr_language,
+				  "apiai_language": apiai_language,
+				  "prior_dialog_state": dialog_state
+				 }
         qs2 = urllib.urlencode(values)
         action_url = "/process_speech?" + qs2
 		gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url, method="POST")
@@ -297,7 +298,7 @@ def getBalance(nickname, Accounttype):
         result = response.json()
         accountbalance = result[u'balance']
         Balance = str(accountbalance)
-    return Balance
+		return Balance
 
 #Helper function for Last Transfer
 def getLasttransfer(nickname, Accounttype):
