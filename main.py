@@ -280,7 +280,7 @@ def processRequest(req):
     phoneNo = parameters.get('phonenumber')
     payeeacc = parameters.get('transcustomername')
     payeeaccounttype = parameters.get('transtype')
-    amount = parameters.get('amount')
+    transamount = parameters.get('amount')
 
     # Get Balance Amount for account from account id
     if intentname == 'Account_Balance':
@@ -297,35 +297,35 @@ def processRequest(req):
         accountnumber = swap(accnumb)
         print 'Account number:' + accountnumber
         lasttransfer = getLasttransfer(accountnumber, accounttype)
-        Amount = result[0][u'amount']
+        Amount = lasttransfer[0][u'amount']
         Transferamount = str(Amount)
         date = result[0][u'transaction_date']
         Transferdate = str(date)
         speech = 'The last transfer you made was for ' + Transferamount \
             + ' dollars on ' + Transferdate
+        
+    # Get Last purchase for account from account id    
     elif intentname == 'Last_purchase':
-
-    # Get Last purchase for account from account id
         accnumb = str(accno)
         accountnumber = swap(accnumb)
         print 'Account number:' + accountnumber
         lastpurchase = getLastpurchase(accountnumber, accounttype)
-        Amount = result[0][u'amount']
-        Transferamount = str(Amount)
+        Amount = lastpurchase[0][u'amount']
+        Purchaseamount = str(Amount)
         date = result[0][u'purchase_date']
         Purchasedate = str(date)
-        speech = 'The last purchase you made was for ' + Transferamount \
+        speech = 'The last purchase you made was for ' + Purchaseamount \
             + ' dollars on ' + Purchasedate
-    elif intentname == 'Transfer_funds':
-
+   
     # Transfer funds through account id
+    elif intentname == 'Transfer_funds':
         accnumb = str(accno)
         accountnumber = swap(accnumb)
         print 'Account number:' + accountnumber
         payeeaccnumb = str(payeeacc)
         payeeaccountnumber = swap(payeeaccnumb)
         print 'Payee Account number:' + payeeaccountnumber
-        xferamount = str(amount)
+        xferamount = str(transamount)
         transferamount = swap(xferamount)
         print 'Transfer amount:' + transferamount
         result = createTransfer(accountnumber, accounttype, payeename,
