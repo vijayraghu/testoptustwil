@@ -245,7 +245,7 @@ def apiai_text_to_intent(apiapi_client_access_key, input_text1, user_id, languag
 ##### Reversing Function
 #####
 def swap(text):
-    actual = re.findall(r'\b\d{3,16}\b', text)
+    actual = re.findall(r'\b\d{1,16}\b', text)
     actvalue = actual[0]
     revact = actvalue[::-1]
     print revact
