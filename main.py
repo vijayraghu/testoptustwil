@@ -103,18 +103,18 @@ def process_speech():
     if re.search(r'\b\d{1,16}\b', input_text):
         input_text = re.sub('(?<=\d) (?=\d)', '', input_text)
         input_text1 = swap(input_text)
-        input_text1 = re.sub(r'\b\d{1,16}\b', input_text, input_text1)
-        print "Changed input: " + input_text1
+        input_text = re.sub(r'\b\d{1,16}\b', input_text1, input_text)
+        print "Changed input: " + input_text
     else:
-        input_text1 = input_text
-        print "Unchanged input: " + input_text1
+        #input_text1 = input_text
+        print "Unchanged input: " + input_text
     sys.stdout.flush()
     
     resp = VoiceResponse()
     if (confidence >= 0.0):
 
         # Step 1: Call Bot for intent analysis - API.AI Bot
-        intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text1, user_id, apiai_language)
+        intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
 
         # Step 2: Construct TwiML
         if dialog_state in ['in-progress']:
@@ -201,7 +201,7 @@ def apiai_text_to_intent(apiapi_client_access_key, input_text1, user_id, languag
         'authorization': "Bearer " + apiapi_client_access_key,
         'content-type': "application/json"
     }
-    payload = {'query': input_text1,
+    payload = {'query': input_text,
                'lang': language,
                'sessionId': user_id
     }
