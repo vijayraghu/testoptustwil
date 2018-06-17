@@ -64,7 +64,7 @@ def start():
 
     # TTS the bot response
 
-    gather.say(output_text, voice='alice', language='en-IN')
+    resp.say(output_text, voice='alice', language='en-IN')
     resp.append(gather)
 
     # If gather is missing (no speech), redirect to process speech again
