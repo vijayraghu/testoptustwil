@@ -103,7 +103,7 @@ def process_speech():
     if re.search(r'\b\d{3,16}\b', input_text):
         input_text = re.sub('(?<=\d) (?=\d)', '', input_text)
         input_text1 = swap(input_text)
-        input_text1 = re.sub(r'\b\d{3,16}\b', revact, input_text1)
+        input_text1 = re.sub(r'\b\d{3,16}\b', input_text, input_text1)
         print input_text1
     else:
         input_text1 = input_text
@@ -230,9 +230,9 @@ def apiai_text_to_intent(apiapi_client_access_key, input_text1, user_id, languag
 def swap(text):
     actual = re.findall(r'\b\d{1,16}\b', text)
     actvalue = actual[0]
-    revact = actvalue[::-1]
-    print revact
-    return revact
+    text = actvalue[::-1]
+    print text
+    return text
 
 #####
 ##### API.API fulfillment webhook (You can enable this in API.AI console)
