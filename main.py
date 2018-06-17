@@ -32,7 +32,7 @@ app = Flask(__name__)
 def start():
     caller_phone_number = request.values.get('From')
     user_id = request.values.get('CallSid')
-    polly_voiceid = request.values.get('polly_voiceid', "Joanna")
+    polly_voiceid = request.values.get('polly_voiceid', 'Joanna')
     twilio_asr_language = request.values.get('twilio_asr_language', 'en-IN')
     apiai_language = request.values.get('apiai_language', 'en')
     caller_name = registered_users.get(caller_phone_number, ' ')
@@ -121,9 +121,9 @@ def process_speech():
             qs2 = urllib.urlencode(values)
             action_url = '/process_speech?' + qs2
             gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url, method="POST")
-            values = {"text": output_text,
-                    "polly_voiceid": polly_voiceid,
-                    "region": "us-east-1"
+            values = {"text": output_text, 
+                      "polly_voiceid": polly_voiceid, 
+                      "region": "us-east-1"
                      }
             qs1 = urllib.urlencode(values)
             gather.play(hostname + 'polly_text2speech?' + qs1)
@@ -142,18 +142,18 @@ def process_speech():
             resp.redirect(action_url)
             
         elif dialog_state in ['complete']:
-            values = {"text": output_text,
-                    "polly_voiceid": polly_voiceid,
-                    "region": "us-east-1"
+            values = {"text": output_text, 
+                      "polly_voiceid": polly_voiceid, 
+                      "region": "us-east-1"
             }
             qs = urllib.urlencode(values)
             resp.play(hostname + 'polly_text2speech?' + qs)
             resp.hangup()
             
         elif dialog_state in ['Failed']:
-            values = {"text": "I am sorry, there was an error.  Please call again!",
-                    "polly_voiceid": polly_voiceid,
-                    "region": "us-east-1"
+            values = {"text": "I am sorry, there was an error.  Please call again!", 
+                      "polly_voiceid": polly_voiceid, 
+                      "region": "us-east-1"
             }
             qs = urllib.urlencode(values)
             resp.play(hostname + 'polly_text2speech?' + qs)
@@ -165,7 +165,7 @@ def process_speech():
         output_text = prior_text
         dialog_state = prior_dialog_state
         values = {'prior_text': output_text,  
-                  "polly_voiceid": polly_voiceid, 
+                  'polly_voiceid': polly_voiceid, 
                   'twilio_asr_language': twilio_asr_language, 
                   'apiai_language': apiai_language, 
                   'prior_dialog_state': dialog_state
