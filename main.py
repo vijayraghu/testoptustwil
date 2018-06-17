@@ -104,7 +104,7 @@ def process_speech():
         input_text = re.sub('(?<=\d) (?=\d)', '', input_text)
         input_text1 = swap(input_text)
         input_text1 = re.sub(r'\b\d{3,16}\b', input_text, input_text1)
-        print input_text1
+        print "Changed input: " + input_text1
     else:
         input_text1 = input_text
         print "Unchanged input: " + input_text1
@@ -231,7 +231,7 @@ def swap(text):
     actual = re.findall(r'\b\d{1,16}\b', text)
     actvalue = actual[0]
     text = actvalue[::-1]
-    print text
+    print "Swap function result: " + text
     return text
 
 #####
@@ -260,6 +260,7 @@ def processRequest(req):
     actionname = parameters.get('action')
     accounttype = parameters.get('type')
     accno = parameters.get('accnum')
+    print "Sent account Number is: " + accno
     payeeacc = parameters.get('transaccnum')
     payeeaccounttype = parameters.get('transtype')
     transamount = parameters.get('amount')
