@@ -277,10 +277,10 @@ def processRequest(req):
     actionname = parameters.get('action')
     accounttype = parameters.get('type')
     accno = parameters.get('accnum')
-    phoneNo = parameters.get('phonenumber')
-    payeeacc = parameters.get('transcustomername')
+    payeeacc = parameters.get('transaccnum')
     payeeaccounttype = parameters.get('transtype')
     transamount = parameters.get('amount')
+    phoneNo = parameters.get('phonenumber')
 
     # Get Balance Amount for account from account id
     if intentname == 'Account_Balance':
@@ -328,7 +328,7 @@ def processRequest(req):
         xferamount = str(transamount)
         transferamount = swap(xferamount)
         print 'Transfer amount:' + transferamount
-        result = createTransfer(accountnumber, accounttype, payeename,
+        result = createTransfer(accountnumber, accounttype, payeeaccountnumber,
                                 payeeaccounttype, transferamount)
         responsecode = result[u'code']
         transId = result[u'objectCreated'][u'_id']
@@ -400,10 +400,10 @@ def getLastpurchase(nickname, Accounttype):
 #Helper function for Transfer funds
 def createTransfer(
     name,
-    fromaccount,
+    Payeraccounttype,
     payee,
-    toaccount,
-    toamount,
+    Payeeaccounttype,
+    transferamount,
     ):
 
     print 'i am here'
@@ -411,8 +411,8 @@ def createTransfer(
         details = json.load(json_file)
         dateObject = datetime.date.today()
         dateString = dateObject.strftime('%Y-%m-%d')
-        payeraccountId = details['Vijay'][Accounttype]
-        payeeaccountId = details['Sriram'][Accounttype]
+        payeraccountId = details['Vijay'][Payeraccounttype]
+        payeeaccountId = details['Sriram'][Payeeaccounttype]
         print payeeaccountId, payeraccountId
         url = \
             'http://api.reimaginebanking.com/accounts/{}/transfers?key={}'.format(payeraccountId,
@@ -420,7 +420,7 @@ def createTransfer(
         payload = {
             'medium': 'balance',
             'payee_id': payeeaccountId,
-            'amount': float(toamount),
+            'amount': float(transferamount),
             'transaction_date': dateString,
             'description': 'Personal',
             }
