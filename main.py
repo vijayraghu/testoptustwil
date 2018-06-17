@@ -48,10 +48,7 @@ def start():
     payload = {'event': {'name': 'abn_bank_welcome',
                'data': {'user_name': caller_name}},
                'lang': apiai_language, 'sessionId': user_id}
-    response = requests.request('POST', url=apiai_url,
-                                data=json.dumps(payload),
-                                headers=headers,
-                                params=apiai_querystring)
+    response = requests.request("POST", url=apiai_url, data=json.dumps(payload), headers=headers, params=apiai_querystring)
     print response.text
     output = json.loads(response.text)
     output_text = output['result']['fulfillment']['speech']
@@ -63,14 +60,7 @@ def start():
     values = {'prior_text': output_text}
     qs = urllib.urlencode(values)
     action_url = '/process_speech?' + qs
-    gather = Gather(
-        input='speech',
-        hints=hints,
-        language=twilio_asr_language,
-        timeout='3',
-        action=action_url,
-        method='POST'
-    )
+    gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url, method="POST")
 
     # TTS the bot response
 
@@ -97,23 +87,16 @@ def start():
 @app.route('/process_speech', methods=['GET', 'POST'])
 def process_speech():
     user_id = request.values.get('CallSid')
-
-    # polly_voiceid = request.values.get('polly_voiceid', "Joanna")
-
-    twilio_asr_language = request.values.get('twilio_asr_language',
-            'en-IN')
+    twilio_asr_language = request.values.get('twilio_asr_language', 'en-IN')
     apiai_language = request.values.get('apiai_language', 'en')
     prior_text = request.values.get('prior_text', 'Prior text missing')
-    prior_dialog_state = request.values.get('prior_dialog_state',
-            'ElicitIntent')
+    prior_dialog_state = request.values.get('prior_dialog_state', 'ElicitIntent')
     input_text = request.values.get('SpeechResult', '')
     confidence = float(request.values.get('Confidence', 0.0))
     hostname = request.url_root
-    print 'Twilio Speech to Text: ' + input_text + ' Confidence: ' \
-        + str(confidence)
-
+    print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
+    
     # Swapping the value if it has PII data
-
     if re.search(r'\b\d{3,16}\b', input_text):
         input_text = re.sub('(?<=\d) (?=\d)', '', input_text)
         input_text1 = swap(input_text)
@@ -122,45 +105,29 @@ def process_speech():
     else:
         input_text1 = input_text
         print input_text1
-
     sys.stdout.flush()
-
     resp = VoiceResponse()
-    if confidence >= 0.0:
+    if (confidence >= 0.0):
 
         # Step 1: Call Bot for intent analysis - API.AI Bot
+        intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text1, user_id, apiai_language)
 
-        (intent_name, output_text, dialog_state) = \
-            apiai_text_to_intent(apiai_client_access_key, input_text1,
-                                 user_id, apiai_language)
-
-            # Step 2: Construct TwiML
-
+        # Step 2: Construct TwiML
         if dialog_state in ['in-progress']:
-            values = {'prior_text': output_text,
-                      'prior_dialog_state': dialog_state}
+            values = {'prior_text': output_text, 'prior_dialog_state': dialog_state}
             qs2 = urllib.urlencode(values)
             action_url = '/process_speech?' + qs2
-            gather = Gather(
-                input='speech',
-                hints=hints,
-                language=twilio_asr_language,
-                timeout='3',
-                action=action_url,
-                method='POST'
-            )
+            gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url, method="POST")
             gather.say(output_text, voice='alice', language='en-IN')
             resp.append(gather)
 
-        # If gather is missing (no speech), redirect to process incomplete speech via the Bot
-
-            values = {  # "polly_voiceid": polly_voiceid,
-                'prior_text': output_text,
-                'twilio_asr_language': twilio_asr_language,
-                'apiai_language': apiai_language,
-                'SpeechResult': '',
-                'Confidence': 0.0
-                }
+            # If gather is missing (no speech), redirect to process incomplete speech via the Bot
+            values = {'prior_text': output_text, 
+                      'twilio_asr_language': twilio_asr_language, 
+                      'apiai_language': apiai_language, 
+                      'SpeechResult': '', 
+                      'Confidence': 0.0
+                     }
             qs3 = urllib.urlencode(values)
             action_url = '/process_speech?' + qs3
             resp.redirect(action_url)
@@ -168,45 +135,34 @@ def process_speech():
             resp.say(output_text, voice='alice', language='en-IN')
             resp.hangup()
         elif dialog_state in ['Failed']:
-            resp.say('I am sorry, there was an error.  Please call again!'
-                     , voice='alice', language='en-IN')
+            resp.say('I am sorry, there was an error.  Please call again!', voice='alice', language='en-IN')
             resp.hangup()
     else:
 
         # We didn't get STT of higher confidence, replay the prior conversation
-
         output_text = prior_text
         dialog_state = prior_dialog_state
-        values = {  # "polly_voiceid": polly_voiceid,
-            'prior_text': output_text,
-            'twilio_asr_language': twilio_asr_language,
-            'apiai_language': apiai_language,
-            'prior_dialog_state': dialog_state
-            }
+        values = {'prior_text': output_text, 
+                  'twilio_asr_language': twilio_asr_language, 
+                  'apiai_language': apiai_language, 
+                  'prior_dialog_state': dialog_state
+                 }
         qs2 = urllib.urlencode(values)
         action_url = '/process_speech?' + qs2
-        gather = Gather(
-            input='speech',
-            hints=hints,
-            language=twilio_asr_language,
-            timeout='3',
-            action=action_url,
-            method='POST'
-        )
+        gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url, method="POST")
         gather.say(output_text, voice='alice', language='en-IN')
         resp.append(gather)
-
-        values = {  # "polly_voiceid": polly_voiceid,
-            'prior_text': output_text,
-            'twilio_asr_language': twilio_asr_language,
-            'apiai_language': apiai_language,
-            'prior_dialog_state': dialog_state
-            }
+        
+        values = {'prior_text': output_text, 
+                  'twilio_asr_language': twilio_asr_language, 
+                  'apiai_language': apiai_language, 
+                  'prior_dialog_state': dialog_state
+                 }
         qs2 = urllib.urlencode(values)
         action_url = '/process_speech?' + qs2
         resp.redirect(action_url)
-        print 'Resp:' + str(resp)
-        return str(resp)
+     print 'Resp:' + str(resp)
+     return str(resp)
 
 #####
 ##### Google Api.ai - Text to Intent
