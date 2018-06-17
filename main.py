@@ -32,11 +32,8 @@ app = Flask(__name__)
 def start():
     caller_phone_number = request.values.get('From')
     user_id = request.values.get('CallSid')
-
-    # polly_voiceid = request.values.get('polly_voiceid', "Joanna")
-
-    twilio_asr_language = request.values.get('twilio_asr_language',
-            'en-IN')
+    polly_voiceid = request.values.get('polly_voiceid', "Joanna")
+    twilio_asr_language = request.values.get('twilio_asr_language', 'en-IN')
     apiai_language = request.values.get('apiai_language', 'en')
     caller_name = registered_users.get(caller_phone_number, ' ')
     hostname = request.url_root
@@ -48,6 +45,7 @@ def start():
     payload = {'event': {'name': 'abn_bank_welcome',
                'data': {'user_name': caller_name}},
                'lang': apiai_language, 'sessionId': user_id}
+    
     response = requests.request("POST", url=apiai_url, data=json.dumps(payload), headers=headers, params=apiai_querystring)
     print response.text
     output = json.loads(response.text)
@@ -61,15 +59,19 @@ def start():
     qs = urllib.urlencode(values)
     action_url = '/process_speech?' + qs
     gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url, method="POST")
-
+    
     # TTS the bot response
-
-    resp.say(output_text, voice='alice', language='en-IN')
+    values = {"text": output_text,
+              "polly_voiceid": polly_voiceid,
+              "region": "us-east-1"
+             }
+    qs = urllib.urlencode(values)
+    gather.play(hostname + 'polly_text2speech?' + qs)
     resp.append(gather)
 
     # If gather is missing (no speech), redirect to process speech again
-
     values = {'prior_text': output_text,
+              "polly_voiceid": polly_voiceid,
               'twilio_asr_language': twilio_asr_language,
               'apiai_language': apiai_language,
               'SpeechResult': '',
@@ -104,8 +106,9 @@ def process_speech():
         print input_text1
     else:
         input_text1 = input_text
-        print input_text1
+        print "Unchanged input: " + input_text1
     sys.stdout.flush()
+    
     resp = VoiceResponse()
     if (confidence >= 0.0):
 
@@ -118,11 +121,17 @@ def process_speech():
             qs2 = urllib.urlencode(values)
             action_url = '/process_speech?' + qs2
             gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url, method="POST")
-            gather.say(output_text, voice='alice', language='en-IN')
+            values = {"text": output_text,
+                    "polly_voiceid": polly_voiceid,
+                    "region": "us-east-1"
+                     }
+            qs1 = urllib.urlencode(values)
+            gather.play(hostname + 'polly_text2speech?' + qs1)
             resp.append(gather)
 
             # If gather is missing (no speech), redirect to process incomplete speech via the Bot
             values = {'prior_text': output_text, 
+                      "polly_voiceid": polly_voiceid, 
                       'twilio_asr_language': twilio_asr_language, 
                       'apiai_language': apiai_language, 
                       'SpeechResult': '', 
@@ -131,18 +140,32 @@ def process_speech():
             qs3 = urllib.urlencode(values)
             action_url = '/process_speech?' + qs3
             resp.redirect(action_url)
+            
         elif dialog_state in ['complete']:
-            resp.say(output_text, voice='alice', language='en-IN')
+            values = {"text": output_text,
+                    "polly_voiceid": polly_voiceid,
+                    "region": "us-east-1"
+            }
+            qs = urllib.urlencode(values)
+            resp.play(hostname + 'polly_text2speech?' + qs)
             resp.hangup()
+            
         elif dialog_state in ['Failed']:
-            resp.say('I am sorry, there was an error.  Please call again!', voice='alice', language='en-IN')
+            values = {"text": "I am sorry, there was an error.  Please call again!",
+                    "polly_voiceid": polly_voiceid,
+                    "region": "us-east-1"
+            }
+            qs = urllib.urlencode(values)
+            resp.play(hostname + 'polly_text2speech?' + qs)
             resp.hangup()
+            
     else:
 
         # We didn't get STT of higher confidence, replay the prior conversation
         output_text = prior_text
         dialog_state = prior_dialog_state
-        values = {'prior_text': output_text, 
+        values = {'prior_text': output_text,  
+                  "polly_voiceid": polly_voiceid, 
                   'twilio_asr_language': twilio_asr_language, 
                   'apiai_language': apiai_language, 
                   'prior_dialog_state': dialog_state
@@ -150,10 +173,16 @@ def process_speech():
         qs2 = urllib.urlencode(values)
         action_url = '/process_speech?' + qs2
         gather = Gather(input="speech", hints=hints, language=twilio_asr_language, timeout="3", action=action_url, method="POST")
-        gather.say(output_text, voice='alice', language='en-IN')
+        values = {"text": output_text,
+                  "polly_voiceid": polly_voiceid,
+                  "region": "us-east-1"
+                  }
+        qs1 = urllib.urlencode(values)
+        gather.play(hostname + 'polly_text2speech?' + qs1)
         resp.append(gather)
         
         values = {'prior_text': output_text, 
+                  "polly_voiceid": polly_voiceid,
                   'twilio_asr_language': twilio_asr_language, 
                   'apiai_language': apiai_language, 
                   'prior_dialog_state': dialog_state
@@ -385,6 +414,39 @@ def createTransfer(
         result = response.json()
         print result
         return result
+      
+#####
+##### AWS Polly for Text to Speech
+##### This function calls Polly and then streams out the in-memory media in mp3 format
+#####
+@app.route('/polly_text2speech', methods=['GET', 'POST'])
+def polly_text2speech():
+    text = request.args.get('text', "Hello! Invalid request. Please provide the TEXT value")
+    voiceid = request.args.get('polly_voiceid', "Joanna")
+    region = request.args.get('region', "us-east-1")
+    # Create a client using the credentials and region
+    polly = boto3.client("polly", aws_access_key_id = aws_access_key_id, aws_secret_access_key = aws_secret_key, region_name=region)
+    # Request speech synthesis
+    response = polly.synthesize_speech(Text=text, SampleRate="8000", OutputFormat="mp3", VoiceId=voiceid)
+
+    # Access the audio stream from the response
+    if "AudioStream" in response:
+        # Note: Closing the stream is important as the service throttles on the
+        # number of parallel connections. Here we are using contextlib.closing to
+        # ensure the close method of the stream object will be called automatically
+        # at the end of the with statement's scope.
+        def generate():
+            with closing(response["AudioStream"]) as dmp3:
+                data = dmp3.read(1024)
+                while data:
+                    yield data
+                    data = dmp3.read(1024)
+        return Response(generate(), mimetype="audio/mpeg")
+    else:
+        # The response didn't contain audio data, exit gracefully
+        print("Could not stream audio")
+        return "Error"
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug = True)
