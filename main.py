@@ -90,7 +90,7 @@ def process_speech():
     prior_dialog_state = request.values.get('prior_dialog_state', "ElicitIntent")
     input_text = request.values.get("SpeechResult", "")
     confidence = float(request.values.get("Confidence", 0.0))
-hostname = request.url_root
+	hostname = request.url_root
 	print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
     #Swapping the value if it has PII data
 	if re.search(r'\b\d{3,16}\b', input_text):
