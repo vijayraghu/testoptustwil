@@ -299,7 +299,7 @@ def processRequest(req):
         lasttransfer = getLasttransfer(accountnumber, accounttype)
         Amount = lasttransfer[0][u'amount']
         Transferamount = str(Amount)
-        date = result[0][u'transaction_date']
+        date = lasttransfer[0][u'transaction_date']
         Transferdate = str(date)
         speech = 'The last transfer you made was for ' + Transferamount \
             + ' dollars on ' + Transferdate
@@ -312,7 +312,7 @@ def processRequest(req):
         lastpurchase = getLastpurchase(accountnumber, accounttype)
         Amount = lastpurchase[0][u'amount']
         Purchaseamount = str(Amount)
-        date = result[0][u'purchase_date']
+        date = lastpurchase[0][u'purchase_date']
         Purchasedate = str(date)
         speech = 'The last purchase you made was for ' + Purchaseamount \
             + ' dollars on ' + Purchasedate
