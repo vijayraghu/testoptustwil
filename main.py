@@ -271,7 +271,7 @@ def processRequest(req):
     actionname = parameters.get('action')
     accounttype = parameters.get('type')
     accno = parameters.get('accnum')
-    print "Sent account Number is: " + accno
+    print "Sent account Number is: " + str(accno)
     payeeacc = parameters.get('transaccnum')
     payeeaccounttype = parameters.get('transtype')
     transamount = parameters.get('amount')
