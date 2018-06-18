@@ -127,7 +127,9 @@ def process_speech():
                       "region": "us-east-1"
                      }
             qs1 = urllib.urlencode(values)
+            print 'In-progress: Before polly tts'
             gather.play(hostname + 'polly_text2speech?' + qs1)
+            print 'In progress: After polly tts'
             resp.append(gather)
 
             # If gather is missing (no speech), redirect to process incomplete speech via the Bot
@@ -148,7 +150,9 @@ def process_speech():
                       "region": "us-east-1"
             }
             qs = urllib.urlencode(values)
+            print 'in complete: before polly tts'
             resp.play(hostname + 'polly_text2speech?' + qs)
+            print 'in complete: after polly tts'
             resp.hangup()
             
         elif dialog_state in ['Failed']:
@@ -157,7 +161,9 @@ def process_speech():
                       "region": "us-east-1"
             }
             qs = urllib.urlencode(values)
+            print 'In failed: Before polly tts'
             resp.play(hostname + 'polly_text2speech?' + qs)
+            print 'In failed: After polly tts'
             resp.hangup()
             
     else:
@@ -177,7 +183,9 @@ def process_speech():
                   "region": "us-east-1"
                   }
         qs1 = urllib.urlencode(values)
+        print 'Before calling polly tts'
         gather.play(hostname + 'polly_text2speech?' + qs1)
+        print 'After polly tts read"
         resp.append(gather)
 
         values = {"prior_text": output_text,
