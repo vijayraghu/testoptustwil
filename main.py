@@ -431,6 +431,7 @@ def createTransfer(
 #####
 @app.route('/polly_text2speech', methods=['GET', 'POST'])
 def polly_text2speech():
+    print 'Inside polly tts method'
     text = request.args.get('text', "Hello! Invalid request. Please provide the TEXT value")
     voiceid = request.args.get('polly_voiceid', "Joanna")
     region = request.args.get('region', "us-east-1")
@@ -446,11 +447,13 @@ def polly_text2speech():
         # ensure the close method of the stream object will be called automatically
         # at the end of the with statement's scope.
         def generate():
+            print 'inside polly tts generate method'
             with closing(response["AudioStream"]) as dmp3:
                 data = dmp3.read(1024)
                 while data:
                     yield data
                     data = dmp3.read(1024)
+            print 'generate complete for polly tts'
         return Response(generate(), mimetype="audio/mpeg")
     else:
         # The response didn't contain audio data, exit gracefully
