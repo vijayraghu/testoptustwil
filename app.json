@@ -2,7 +2,7 @@
   "name": "Intent based IVR",
   "description": "ML Powered Conversational IVR",
   "repository": "https://github.com/vijayraghu/bankteller",
-  "logo": "http://presos.jamesward.com/practicing_continuous_delivery/assets/python.png",
+  "logo": "",
   "keywords": ["python", "intent-based", "ivr"],
   "env": {
   "APIAPI_CLIENT_ACCESS_KEY": {
