@@ -23,6 +23,7 @@ apiai_querystring = {"v": "20150910"}
 registered_users = {"+919840610434": "Vijay",
                    "+914444461324": "Vijay"
 }
+caller_phone_number = ''
 # Adjust the hints for improved Speech to Text
 hints = "1,2,3,4,5,6,7,8,9,0, 1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, account acount akount, january, february, march, april, may, june, july, august, september, october, november, december"
 
