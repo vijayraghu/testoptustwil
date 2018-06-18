@@ -23,7 +23,7 @@ apiai_querystring = {"v": "20150910"}
 registered_users = {"+919840610434": "Vijay",
                    "+914444461324": "Vijay"
 }
-caller_phone_number = ''
+
 # Adjust the hints for improved Speech to Text
 hints = "1,2,3,4,5,6,7,8,9,0, 1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, account acount akount, january, february, march, april, may, june, july, august, september, october, november, december"
 
@@ -342,11 +342,11 @@ def processRequest(req):
     return res
 
 #Helper function for Balance
-def getBalance(nickname, Accounttype):
+def getBalance(accountnumber, accounttype):
     with open('details.json') as json_file:
         details = json.load(json_file)
-        print apiKey, nickname
-        accountId = details['Vijay'][Accounttype]
+        print apiKey, accountnumber
+        accountId = details[accountnumber][accounttype]
         print accountId
         url = \
             'http://api.reimaginebanking.com/accounts/{}?key={}'.format(accountId,
@@ -361,11 +361,11 @@ def getBalance(nickname, Accounttype):
         return Balance
 
 #Helper function for Last Transfer
-def getLasttransfer(nickname, Accounttype):
+def getLasttransfer(accountnumber, accounttype):
     with open('details.json') as json_file:
         details = json.load(json_file)
-        print apiKey, nickname
-        accountId = details['Vijay'][Accounttype]
+        print apiKey, accountnumber
+        accountId = details[accountnumber][accounttype]
         print accountId
         url = \
             'http://api.reimaginebanking.com/accounts/{}/transfers?type=payer&key={}'.format(accountId,
@@ -377,11 +377,11 @@ def getLasttransfer(nickname, Accounttype):
         return lasttransfer
 
 #Helper function for Last Purchase
-def getLastpurchase(nickname, Accounttype):
+def getLastpurchase(accountnumber, accounttype):
     with open('details.json') as json_file:
         details = json.load(json_file)
-        print apiKey, nickname
-        accountId = details['Vijay'][Accounttype]
+        print apiKey, accountnumber
+        accountId = details[accountnumber][accounttype]
         print accountId
         url = \
             'http://api.reimaginebanking.com/accounts/{}/purchases?key={}'.format(accountId,
@@ -393,21 +393,14 @@ def getLastpurchase(nickname, Accounttype):
         return lastpurchase
     
 #Helper function for Transfer funds
-def createTransfer(
-    name,
-    Payeraccounttype,
-    payee,
-    Payeeaccounttype,
-    transferamount,
-    ):
-
+def createTransfer(accountnumber, accounttype, payeeaccountnumber, payeeaccounttype, transferamount):
     print 'i am here'
     with open('details.json') as json_file:
         details = json.load(json_file)
         dateObject = datetime.date.today()
         dateString = dateObject.strftime('%Y-%m-%d')
-        payeraccountId = details['Vijay'][Payeraccounttype]
-        payeeaccountId = details['Sriram'][Payeeaccounttype]
+        payeraccountId = details[accountnumber][accounttype]
+        payeeaccountId = details[payeeaccountnumber][payeeaccounttype]
         print payeeaccountId, payeraccountId
         url = \
             'http://api.reimaginebanking.com/accounts/{}/transfers?key={}'.format(payeraccountId,
