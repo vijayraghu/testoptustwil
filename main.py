@@ -13,7 +13,7 @@ import boto3
 import re
 import datetime
 
-# Setup global variables
+# Declare global variables
 apiai_client_access_key = os.environ["APIAPI_CLIENT_ACCESS_KEY"]
 aws_access_key_id = os.environ["AWS_ACCESS_KEY_ID"]
 aws_secret_key = os.environ["AWS_SECRET_KEY"]
@@ -24,7 +24,7 @@ registered_users = {"+919840610434": "Vijay",
                    "+914444461324": "Vijay"
 }
 
-# Adjust the hints for improved Speech to Text
+# Setup hints for better speech recognition
 hints = "1,2,3,4,5,6,7,8,9,0, 1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, account acount akount, january, february, march, april, may, june, july, august, september, october, november, december"
 
 app = Flask(__name__)
@@ -39,8 +39,7 @@ def start():
     caller_name = registered_users.get(caller_phone_number, ' ')
     hostname = request.url_root
 
-    # Initialize API.AI Bot
-
+    # Initialize Dialogflow agent
     headers = {'authorization': 'Bearer ' + apiai_client_access_key,
                'content-type': 'application/json'}
     payload = {'event': {'name': 'abn_bank_welcome',
@@ -55,13 +54,12 @@ def start():
     resp = VoiceResponse()
 
     # Prepare for next set of user Speech
-
     values = {'prior_text': output_text}
     qs = urllib.urlencode(values)
     action_url = '/process_speech?' + qs
     gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
     
-    # TTS the bot response
+    # TTS dialogflow response
     values = {"text": output_text,
               "polly_voiceid": polly_voiceid,
               "region": "us-east-1"
@@ -72,7 +70,7 @@ def start():
     print 'In start: after polly TTS'
     resp.append(gather)
 
-    # If gather is missing (no speech), redirect to process speech again
+    # If gather is missing (no speech input), redirect to /process_speech again
     values = {'prior_text': output_text,
               "polly_voiceid": polly_voiceid,
               'twilio_asr_language': twilio_asr_language,
@@ -116,7 +114,7 @@ def process_speech():
     resp = VoiceResponse()
     if (confidence >= 0.0):
 
-        # Step 1: Call Bot for intent analysis - API.AI Bot
+        # Step 1: Call Dialogflow for intent analysis
         intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
 
         # Step 2: Construct TwiML
@@ -135,7 +133,7 @@ def process_speech():
             print 'In progress: After polly tts'
             resp.append(gather)
 
-            # If gather is missing (no speech), redirect to process incomplete speech via the Bot
+            # If gather is missing (no speech input), redirect to process incomplete speech via Dialogflow
             values = {'prior_text': output_text, 
                       "polly_voiceid": polly_voiceid, 
                       'twilio_asr_language': twilio_asr_language, 
@@ -170,7 +168,7 @@ def process_speech():
             resp.hangup()
             
     else:
-        # We didn't get STT of higher confidence, replay the prior conversation
+        # Since confidence of speech recogniton is not enough, replay the prior conversation
         output_text = prior_text
         dialog_state = prior_dialog_state
         values = {"prior_text": output_text,
@@ -204,7 +202,7 @@ def process_speech():
     return str(resp)
 
 #####
-##### Google Api.ai - Text to Intent
+##### Google Dialogflow - Intent identification from text
 #####
 #@app.route('/apiai_text_to_intent', methods=['GET', 'POST'])
 def apiai_text_to_intent(apiapi_client_access_key, input_text, user_id, language):
@@ -236,7 +234,7 @@ def apiai_text_to_intent(apiapi_client_access_key, input_text, user_id, language
     return intent_stage, output_text, dialog_state
 
 #####
-##### Reversing Function
+##### Reversing Values
 #####
 def swap(text):
     actual = re.findall(r'\b\d{1,16}\b', text)
@@ -246,9 +244,8 @@ def swap(text):
     return text
 
 #####
-##### API.API fulfillment webhook (You can enable this in API.AI console)
+##### Dialogflow fulfillment webhook
 #####
-
 @app.route('/webhook', methods=['POST'])
 def webhook():
     req = request.get_json(silent=True, force=True)
