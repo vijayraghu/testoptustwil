@@ -185,7 +185,7 @@ def process_speech():
         qs1 = urllib.urlencode(values)
         print 'Before calling polly tts'
         gather.play(hostname + 'polly_text2speech?' + qs1)
-        print 'After polly tts read"
+        print 'After polly tts read'
         resp.append(gather)
 
         values = {"prior_text": output_text,
