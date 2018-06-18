@@ -66,7 +66,9 @@ def start():
               "region": "us-east-1"
              }
     qs = urllib.urlencode(values)
+    print 'In start: before polly TTS'
     gather.play(hostname + 'polly_text2speech?' + qs)
+    print 'In start: after polly TTS'
     resp.append(gather)
 
     # If gather is missing (no speech), redirect to process speech again
