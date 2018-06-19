@@ -149,7 +149,7 @@ def process_speech():
             values = {"text": output_text, 
                       "polly_voiceid": polly_voiceid, 
                       "region": "us-east-1"
-            }
+		     }
             qs = urllib.urlencode(values)
             print 'in complete: before polly tts'
             resp.play(hostname + 'polly_text2speech?' + qs)
@@ -162,8 +162,8 @@ def process_speech():
                       }
             qs5 = urllib.urlencode(values)
             resp.play((hostname + 'polly_text2speech?' + qs5)
-			
-	    # Process next intent of caller
+	    
+	    # Process next intent of caller  
 	    values = {'prior_text': output_text, 'prior_dialog_state': dialog_state}
             qs6 = urllib.urlencode(values)
             action_url = '/process_speech?' + qs6
