@@ -199,7 +199,7 @@ def process_speech():
     else:
         # When confidence of speech recogniton is not enough, replay the prior conversation
         output_text = prior_text
-        dialog_state = prior_dialog_state
+        #dialog_state = prior_dialog_state
 	'''
         values = {"prior_text": output_text,
                   "polly_voiceid": polly_voiceid,
