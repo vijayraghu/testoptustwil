@@ -147,6 +147,12 @@ def process_speech():
 		
         # If intent is fulfilled, read the fulfillment speech    
         elif dialog_state in ['complete']:
+	    print 'Output_text is: ' + output_text	
+	    values = {"text": output_text, "polly_voiceid": polly_voiceid, "region": "us-east-1"}
+	    qs = urllib.urlencode(values)
+            print 'in complete: before polly tts'
+	    gather.play(hostname + 'polly_text2speech?' + qs)
+	    resp.append(gather)
 	    values = {'prior_text': output_text, 'prior_dialog_state': dialog_state}
             qs4 = urllib.urlencode(values)
             action_url = '/process_speech?' + qs4
