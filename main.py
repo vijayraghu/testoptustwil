@@ -161,11 +161,9 @@ def process_speech():
                       "region": "us-east-1"
                       }
             qs5 = urllib.urlencode(values)
-            resp.play((hostname + 'polly_text2speech?' + qs5)
-	    
-	    # Process next intent of caller  
+            resp.play((hostname + 'polly_text2speech?' + qs5))
 	    values = {'prior_text': output_text, 'prior_dialog_state': dialog_state}
-            qs6 = urllib.urlencode(values)
+	    qs6 = urllib.urlencode(values)
             action_url = '/process_speech?' + qs6
             gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
             values = {"text": output_text, 
