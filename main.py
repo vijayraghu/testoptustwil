@@ -115,11 +115,12 @@ def process_speech():
     if (confidence >= 0.0):
 
         # Step 1: Call Dialogflow for intent analysis
-        intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
+        intent_name, output_text = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
 
         # Step 2: Construct TwiML
         #if dialog_state in ['in-progress']:
-        values = {'prior_text': output_text, 'prior_dialog_state': dialog_state}
+        #values = {'prior_text': output_text, 'prior_dialog_state': dialog_state}
+	values = {'prior_text': output_text}
         qs2 = urllib.urlencode(values)
         action_url = '/process_speech?' + qs2
         gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
@@ -199,11 +200,18 @@ def process_speech():
         # When confidence of speech recogniton is not enough, replay the prior conversation
         output_text = prior_text
         dialog_state = prior_dialog_state
+	'''
         values = {"prior_text": output_text,
                   "polly_voiceid": polly_voiceid,
                   "twilio_asr_language": twilio_asr_language,
                   "apiai_language": apiai_language,
                   "prior_dialog_state": dialog_state}
+	'''
+	values = {"prior_text": output_text,
+                  "polly_voiceid": polly_voiceid,
+                  "twilio_asr_language": twilio_asr_language,
+                  "apiai_language": apiai_language}
+	
         qs2 = urllib.urlencode(values)
         action_url = "/process_speech?" + qs2
         gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
@@ -220,10 +228,9 @@ def process_speech():
         values = {"prior_text": output_text,
                   "polly_voiceid": polly_voiceid,
                   "twilio_asr_language": twilio_asr_language,
-                  "apiai_language": apiai_language,
-                  "prior_dialog_state": dialog_state
-                  }
-        qs2 = urllib.urlencode(values)
+                  "apiai_language": apiai_language
+		 }
+	qs2 = urllib.urlencode(values)
         action_url = "/process_speech?" + qs2
         resp.redirect(action_url)
 	
