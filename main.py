@@ -144,37 +144,21 @@ def process_speech():
             qs3 = urllib.urlencode(values)
             action_url = '/process_speech?' + qs3
             resp.redirect(action_url)
-			
+		
         # If intent is fulfilled, read the fulfillment speech    
         elif dialog_state in ['complete']:
-            values = {"text": output_text, 
-                      "polly_voiceid": polly_voiceid, 
-                      "region": "us-east-1"
-		     }
-            qs = urllib.urlencode(values)
-            print 'in complete: before polly tts'
-            resp.play(hostname + 'polly_text2speech?' + qs)
-            print 'in complete: after polly tts'
-			
-	    # Offer the caller to request for another service
-	    values = {"text": "Please let me know if there is anything I can help you with or just hangup", 
-                      "polly_voiceid": polly_voiceid, 
-                      "region": "us-east-1"
-                      }
-            qs5 = urllib.urlencode(values)
-            resp.play((hostname + 'polly_text2speech?' + qs5))
 	    values = {'prior_text': output_text, 'prior_dialog_state': dialog_state}
-	    qs6 = urllib.urlencode(values)
-            action_url = '/process_speech?' + qs6
+            qs4 = urllib.urlencode(values)
+            action_url = '/process_speech?' + qs4
             gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
             values = {"text": output_text, 
                       "polly_voiceid": polly_voiceid, 
                       "region": "us-east-1"
                      }
-            qs7 = urllib.urlencode(values)
-            print 'In-complete1: Before polly tts'
-            gather.play(hostname + 'polly_text2speech?' + qs7)
-            print 'In complete1: After polly tts'
+            qs5 = urllib.urlencode(values)
+            print 'In-progress: Before polly tts'
+            gather.play(hostname + 'polly_text2speech?' + qs5)
+            print 'In progress: After polly tts'
             resp.append(gather)
 
             # If gather is missing (no speech input), redirect to process incomplete speech via Dialogflow
@@ -199,8 +183,9 @@ def process_speech():
             resp.play(hostname + 'polly_text2speech?' + qs)
             print 'In failed: After polly tts'
             resp.hangup()
+		
     else:
-        # Since confidence of speech recogniton is not enough, replay the prior conversation
+        # When confidence of speech recogniton is not enough, replay the prior conversation
         output_text = prior_text
         dialog_state = prior_dialog_state
         values = {"prior_text": output_text,
@@ -230,6 +215,7 @@ def process_speech():
         qs2 = urllib.urlencode(values)
         action_url = "/process_speech?" + qs2
         resp.redirect(action_url)
+	
     print str(resp)
     return str(resp)
 
@@ -313,7 +299,7 @@ def processRequest(req):
         print 'Account number:' + accountnumber
         Balance = getBalance(accountnumber, accounttype)
         speech = 'Your ' + accounttype + ' account balance is ' \
-            + Balance + ' dollars'
+            + Balance + ' dollars. Is there anything else I can help you with today? You can check for your last purchase or last transfer or just hangup.'
         
     # Get Last transfer for account from account id
     elif intentname == 'Last_transfer':
@@ -326,7 +312,7 @@ def processRequest(req):
         date = lasttransfer[0][u'transaction_date']
         Transferdate = str(date)
         speech = 'The last transfer you made was for ' + Transferamount \
-            + ' dollars on ' + Transferdate
+            + ' dollars on ' + Transferdate + '.Is there anything else I can help you with today? You can check for your balance or last transfer or just hangup.'
         
     # Get Last purchase for account from account id    
     elif intentname == 'Last_purchase':
@@ -339,7 +325,7 @@ def processRequest(req):
         date = lastpurchase[0][u'purchase_date']
         Purchasedate = str(date)
         speech = 'The last purchase you made was for ' + Purchaseamount \
-            + ' dollars on ' + Purchasedate
+            + ' dollars on ' + Purchasedate + '.Is there anything else I can help you with today? You can check for your balance or last purchase or just hangup.'
    
     # Transfer funds through account id
     elif intentname == 'Transfer_funds':
