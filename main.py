@@ -87,6 +87,7 @@ def start():
 #####
 ##### Process Twilio ASR: Text to Intent analysis
 #####
+@app.route('/process_speech', methods=['GET', 'POST'])
 def process_speech():
     user_id = request.values.get('CallSid')
     polly_voiceid = request.values.get('polly_voiceid', "Joanna")
