@@ -94,7 +94,6 @@ def process_speech():
     twilio_asr_language = request.values.get('twilio_asr_language', 'en-IN')
     apiai_language = request.values.get('apiai_language', 'en')
     prior_text = request.values.get('prior_text', 'Prior text missing')
-    #prior_dialog_state = request.values.get('prior_dialog_state', 'ElicitIntent')
     input_text = request.values.get('SpeechResult', '')
     confidence = float(request.values.get('Confidence', 0.0))
     hostname = request.url_root
@@ -118,9 +117,7 @@ def process_speech():
         intent_name, output_text = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
 
         # Step 2: Construct TwiML
-        #if dialog_state in ['in-progress']:
-        #values = {'prior_text': output_text, 'prior_dialog_state': dialog_state}
-	values = {'prior_text': output_text}
+        values = {'prior_text': output_text}
         qs2 = urllib.urlencode(values)
         action_url = '/process_speech?' + qs2
         gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
@@ -144,74 +141,14 @@ def process_speech():
 		 }
         qs3 = urllib.urlencode(values)
         action_url = '/process_speech?' + qs3
-        resp.redirect(action_url)
-	'''	
-        # If intent is fulfilled, read the fulfillment speech    
-        elif dialog_state in ['complete']:
-	    print 'Output_text is: ' + output_text	
-	    values = {"text": output_text, "polly_voiceid": polly_voiceid, "region": "us-east-1"}
-	    qs = urllib.urlencode(values)
-            print 'in complete: before polly tts'
-	    resp.play(hostname + 'polly_text2speech?' + qs)
-	    dialog_state = 'in-progress'
-	    
-	    resp.append(gather)
-	    resp.hangup()
-		
-	    	
-	    values = {'prior_text': output_text, 'prior_dialog_state': dialog_state}
-            qs4 = urllib.urlencode(values)
-            action_url = '/process_speech?' + qs4
-            gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
-            values = {"text": output_text, 
-                      "polly_voiceid": polly_voiceid, 
-                      "region": "us-east-1"
-                     }
-            qs5 = urllib.urlencode(values)
-            print 'In-progress: Before polly tts'
-            gather.play(hostname + 'polly_text2speech?' + qs5)
-            print 'In progress: After polly tts'
-            resp.append(gather)
-
-            # If gather is missing (no speech input), redirect to process incomplete speech via Dialogflow
-            values = {'prior_text': output_text, 
-                      "polly_voiceid": polly_voiceid, 
-                      'twilio_asr_language': twilio_asr_language, 
-                      'apiai_language': apiai_language, 
-                      'SpeechResult': '', 
-                      'Confidence': 0.0
-                     }
-            qs8 = urllib.urlencode(values)
-            action_url = '/process_speech?' + qs8
-            resp.redirect(action_url)
-	    
-        elif dialog_state in ['Failed']:
-            values = {"text": "I am sorry, there was an error.  Please call again!", 
-                      "polly_voiceid": polly_voiceid, 
-                      "region": "us-east-1"
-                      }
-            qs = urllib.urlencode(values)
-            print 'In failed: Before polly tts'
-            resp.play(hostname + 'polly_text2speech?' + qs)
-            print 'In failed: After polly tts'
-            resp.hangup()
-	'''	
+        resp.redirect(action_url)	
     else:
         # When confidence of speech recogniton is not enough, replay the prior conversation
         output_text = prior_text
-        #dialog_state = prior_dialog_state
-	'''
         values = {"prior_text": output_text,
                   "polly_voiceid": polly_voiceid,
                   "twilio_asr_language": twilio_asr_language,
-                  "apiai_language": apiai_language,
-                  "prior_dialog_state": dialog_state}
-	'''
-	values = {"prior_text": output_text,
-                  "polly_voiceid": polly_voiceid,
-                  "twilio_asr_language": twilio_asr_language,
                   "apiai_language": apiai_language}
-	
         qs2 = urllib.urlencode(values)
         action_url = "/process_speech?" + qs2
         gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
@@ -224,7 +161,6 @@ def process_speech():
         gather.play(hostname + 'polly_text2speech?' + qs1)
         print 'After polly tts read'
         resp.append(gather)
-
         values = {"prior_text": output_text,
                   "polly_voiceid": polly_voiceid,
                   "twilio_asr_language": twilio_asr_language,
@@ -261,12 +197,6 @@ def apiai_text_to_intent(apiapi_client_access_key, input_text, user_id, language
         intent_stage = output['result']['contexts']
     except:
         intent_stage = "unknown"
-    '''
-    if (output['result']['actionIncomplete']):
-        dialog_state = 'in-progress'
-    else:
-        dialog_state = 'in-progress'
-    '''
     return intent_stage, output_text #, dialog_state
 
 #####
@@ -289,9 +219,6 @@ def webhook():
     print json.dumps(req, indent=4)
     res = processRequest(req)
     res = json.dumps(res, indent=4)
-
-    # print(res)
-
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
     return r
