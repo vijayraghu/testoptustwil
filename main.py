@@ -155,16 +155,16 @@ def process_speech():
             resp.play(hostname + 'polly_text2speech?' + qs)
             print 'in complete: after polly tts'
 			
-			      # Offer the caller to request for another service
-			      values = {"text": "Please let me know if there is anything I can help you with or just hangup", 
+	    # Offer the caller to request for another service
+	    values = {"text": "Please let me know if there is anything I can help you with or just hangup", 
                       "polly_voiceid": polly_voiceid, 
                       "region": "us-east-1"
                       }
             qs5 = urllib.urlencode(values)
             resp.play((hostname + 'polly_text2speech?' + qs5)
 			
-			      # Process next intent of caller
-			      values = {'prior_text': output_text, 'prior_dialog_state': dialog_state}
+	    # Process next intent of caller
+	    values = {'prior_text': output_text, 'prior_dialog_state': dialog_state}
             qs6 = urllib.urlencode(values)
             action_url = '/process_speech?' + qs6
             gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
