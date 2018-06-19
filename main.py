@@ -151,7 +151,7 @@ def process_speech():
 	    values = {"text": output_text, "polly_voiceid": polly_voiceid, "region": "us-east-1"}
 	    qs = urllib.urlencode(values)
             print 'in complete: before polly tts'
-	    gather.play(hostname + 'polly_text2speech?' + qs)
+	    resp.play(hostname + 'polly_text2speech?' + qs)
 	    resp.append(gather)
 	    values = {'prior_text': output_text, 'prior_dialog_state': dialog_state}
             qs4 = urllib.urlencode(values)
