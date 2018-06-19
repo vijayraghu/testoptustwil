@@ -94,7 +94,7 @@ def process_speech():
     twilio_asr_language = request.values.get('twilio_asr_language', 'en-IN')
     apiai_language = request.values.get('apiai_language', 'en')
     prior_text = request.values.get('prior_text', 'Prior text missing')
-    prior_dialog_state = request.values.get('prior_dialog_state', 'ElicitIntent')
+    #prior_dialog_state = request.values.get('prior_dialog_state', 'ElicitIntent')
     input_text = request.values.get('SpeechResult', '')
     confidence = float(request.values.get('Confidence', 0.0))
     hostname = request.url_root
@@ -118,33 +118,33 @@ def process_speech():
         intent_name, output_text, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
 
         # Step 2: Construct TwiML
-        if dialog_state in ['in-progress']:
-            values = {'prior_text': output_text, 'prior_dialog_state': dialog_state}
-            qs2 = urllib.urlencode(values)
-            action_url = '/process_speech?' + qs2
-            gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
-            values = {"text": output_text, 
-                      "polly_voiceid": polly_voiceid, 
-                      "region": "us-east-1"
+        #if dialog_state in ['in-progress']:
+        values = {'prior_text': output_text, 'prior_dialog_state': dialog_state}
+        qs2 = urllib.urlencode(values)
+        action_url = '/process_speech?' + qs2
+        gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
+        values = {"text": output_text, 
+		  "polly_voiceid": polly_voiceid, 
+		  "region": "us-east-1"
                      }
-            qs1 = urllib.urlencode(values)
-            print 'In-progress: Before polly tts'
-            gather.play(hostname + 'polly_text2speech?' + qs1)
-            print 'In progress: After polly tts'
-            resp.append(gather)
+	qs1 = urllib.urlencode(values)
+	print 'In-progress: Before polly tts'
+	gather.play(hostname + 'polly_text2speech?' + qs1)
+	print 'In progress: After polly tts'
+	resp.append(gather)
 
-            # If gather is missing (no speech input), redirect to process incomplete speech via Dialogflow
-            values = {'prior_text': output_text, 
-                      "polly_voiceid": polly_voiceid, 
-                      'twilio_asr_language': twilio_asr_language, 
-                      'apiai_language': apiai_language, 
-                      'SpeechResult': '', 
-                      'Confidence': 0.0
-                     }
-            qs3 = urllib.urlencode(values)
-            action_url = '/process_speech?' + qs3
-            resp.redirect(action_url)
-		
+        # If gather is missing (no speech input), redirect to process incomplete speech via Dialogflow
+        values = {'prior_text': output_text, 
+		  "polly_voiceid": polly_voiceid, 
+		  'twilio_asr_language': twilio_asr_language, 
+		  'apiai_language': apiai_language, 
+		  'SpeechResult': '', 
+		  'Confidence': 0.0
+		 }
+        qs3 = urllib.urlencode(values)
+        action_url = '/process_speech?' + qs3
+        resp.redirect(action_url)
+	'''	
         # If intent is fulfilled, read the fulfillment speech    
         elif dialog_state in ['complete']:
 	    print 'Output_text is: ' + output_text	
@@ -152,7 +152,12 @@ def process_speech():
 	    qs = urllib.urlencode(values)
             print 'in complete: before polly tts'
 	    resp.play(hostname + 'polly_text2speech?' + qs)
+	    dialog_state = 'in-progress'
+	    
 	    resp.append(gather)
+	    resp.hangup()
+		
+	    	
 	    values = {'prior_text': output_text, 'prior_dialog_state': dialog_state}
             qs4 = urllib.urlencode(values)
             action_url = '/process_speech?' + qs4
@@ -178,7 +183,7 @@ def process_speech():
             qs8 = urllib.urlencode(values)
             action_url = '/process_speech?' + qs8
             resp.redirect(action_url)
-        
+	    
         elif dialog_state in ['Failed']:
             values = {"text": "I am sorry, there was an error.  Please call again!", 
                       "polly_voiceid": polly_voiceid, 
@@ -189,7 +194,7 @@ def process_speech():
             resp.play(hostname + 'polly_text2speech?' + qs)
             print 'In failed: After polly tts'
             resp.hangup()
-		
+	'''	
     else:
         # When confidence of speech recogniton is not enough, replay the prior conversation
         output_text = prior_text
@@ -249,13 +254,13 @@ def apiai_text_to_intent(apiapi_client_access_key, input_text, user_id, language
         intent_stage = output['result']['contexts']
     except:
         intent_stage = "unknown"
-
+    '''
     if (output['result']['actionIncomplete']):
         dialog_state = 'in-progress'
     else:
-        dialog_state = 'complete'
-
-    return intent_stage, output_text, dialog_state
+        dialog_state = 'in-progress'
+    '''
+    return intent_stage, output_text #, dialog_state
 
 #####
 ##### Reversing Values
