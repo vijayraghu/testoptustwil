@@ -17,7 +17,7 @@ import datetime
 apiai_client_access_key = os.environ["APIAPI_CLIENT_ACCESS_KEY"]
 aws_access_key_id = os.environ["AWS_ACCESS_KEY_ID"]
 aws_secret_key = os.environ["AWS_SECRET_KEY"]
-apiKey = os.environ["NESSIE_API_KEY"]
+#apiKey = os.environ["NESSIE_API_KEY"]
 apiai_url = "https://api.api.ai/v1/query"
 apiai_querystring = {"v": "20150910"}
 registered_users = {"+919840610434": "Vijay",
