@@ -238,7 +238,7 @@ def processRequest(req):
     #phoneNo = parameters.get('phonenumber')
 
     # Transfer for moving home
-    if intentname == 'moving_home' and move_category == 'moving_in':
+    if intentname == 'moving_home':
         #accnumb = str(accno)
         #accountnumber = swap(accnumb)
         #print 'Account number:' + accountnumber
