@@ -7,7 +7,7 @@ import json
 from flask import Flask, request, Response, make_response, jsonify, url_for
 from contextlib import closing
 # Twilio Helper Library
-from twilio.twiml.voice_response import VoiceResponse, Gather, Say
+from twilio.twiml.voice_response import VoiceResponse, Gather, Say, Dial
 # AWS Python SDK
 import boto3
 import re
@@ -229,26 +229,34 @@ def processRequest(req):
     intentname = metadata.get('intentName')
     parameters = result.get('parameters')
     actionname = parameters.get('action')
-    accounttype = parameters.get('type')
+    move_category = parameters.get('move_category')
     accno = parameters.get('accnum')
     print "Sent account Number is: " + str(accno)
-    payeeacc = parameters.get('transaccnum')
-    payeeaccounttype = parameters.get('transtype')
-    transamount = parameters.get('amount')
-    phoneNo = parameters.get('phonenumber')
+    #payeeacc = parameters.get('transaccnum')
+    #payeeaccounttype = parameters.get('transtype')
+    #transamount = parameters.get('amount')
+    #phoneNo = parameters.get('phonenumber')
 
-    # Get Balance Amount for account from account id
-    if intentname == 'Account_Balance':
-        accnumb = str(accno)
-        accountnumber = swap(accnumb)
-        print 'Account number:' + accountnumber
-        Balance = getBalance(accountnumber, accounttype)
-        speech = 'Your ' + accounttype + ' account balance is ' \
-            + Balance + ' dollars. Is there anything else I can help you with today? You can check for your last purchase or last transfer or just hangup.'
+    # Transfer for moving home
+    if intentname == 'moving_home' and move_category == 'moving_in':
+        #accnumb = str(accno)
+        #accountnumber = swap(accnumb)
+        #print 'Account number:' + accountnumber
+	#response = VoiceResponse()
+	#response.dial('+917338856833')
+        #Balance = getBalance(accountnumber, accounttype)
+	speech = 'Kindly hold on while we connect you to one of our customer service agent who will help you with your Moving in request'
+        #speech = 'Your ' + accounttype + ' account balance is ' \
+            #+ Balance + ' dollars. Is there anything else I can help you with today? You can check for your last purchase or last transfer or just hangup.'
+		
         
-    # Get Last transfer for account from account id
-    elif intentname == 'Last_transfer':
-        accnumb = str(accno)
+    # Transfer for Water meter
+    elif intentname == 'water_meter':
+	#response = VoiceResponse()
+	#response.dial('+917338856833')	
+	speech = 'Kindly hold on while we connect you to one of our customer service agent who will help you with your Water Meter request'
+        '''
+	accnumb = str(accno)
         accountnumber = swap(accnumb)
         print 'Account number:' + accountnumber
         lasttransfer = getLasttransfer(accountnumber, accounttype)
@@ -258,25 +266,31 @@ def processRequest(req):
         Transferdate = str(date)
         speech = 'The last transfer you made was for ' + Transferamount \
             + ' dollars on ' + Transferdate + '.Is there anything else I can help you with today? You can check for your balance or last transfer or just hangup.'
-        
-    # Get Last purchase for account from account id    
-    elif intentname == 'Last_purchase':
+        '''
+	
+    # Transfer for pay bill   
+    elif intentname == 'pay_bill':
         accnumb = str(accno)
         accountnumber = swap(accnumb)
         print 'Account number:' + accountnumber
-        lastpurchase = getLastpurchase(accountnumber, accounttype)
+	speech = 'Kindly hold on while we connect you to our automated payment hotline. Kindly follow the instructions to make your payment through your credit or debit card'
+        '''
+	lastpurchase = getLastpurchase(accountnumber, accounttype)
         Amount = lastpurchase[0][u'amount']
         Purchaseamount = str(Amount)
         date = lastpurchase[0][u'purchase_date']
         Purchasedate = str(date)
         speech = 'The last purchase you made was for ' + Purchaseamount \
             + ' dollars on ' + Purchasedate + '.Is there anything else I can help you with today? You can check for your balance or last purchase or just hangup.'
-   
-    # Transfer funds through account id
-    elif intentname == 'Transfer_funds':
+        '''
+	
+    # Transfer for amending direct debit
+    elif intentname == 'amend_direct_debit':
         accnumb = str(accno)
         accountnumber = swap(accnumb)
         print 'Account number:' + accountnumber
+	speech = 'Kindly hold on while we connect you to our automated payment hotline. Kindly follow the instructions to make your payment through your credit or debit card'
+	'''
         payeeaccnumb = str(payeeacc)
         payeeaccountnumber = swap(payeeaccnumb)
         print 'Payee Account number:' + payeeaccountnumber
@@ -293,6 +307,14 @@ def processRequest(req):
                 + transId
         else:
             speech = 'Your transfer is not successful'
+	'''
+     # Transfer for setting up direct debit
+    elif intentname == 'setup_directdebit':
+        accnumb = str(accno)
+        accountnumber = swap(accnumb)
+        print 'Account number:' + accountnumber
+	speech = 'Kindly hold on while we connect you to our automated payment hotline. Kindly follow the instructions to make your payment through your credit or debit card'	
+	
     else:
         speech = \
             'I am sorry. We are experiencing some technical difficulty. Please call again later'
@@ -300,7 +322,7 @@ def processRequest(req):
     return {'speech': speech, 'displayText': speech,
             'source': 'apiai-account-sample'}  # "data": data, # "contextOut": [],
     return res
-    
+'''    
 #Helper function for Balance
 def getBalance(accountnumber, accounttype):
     with open('details.json') as json_file:
@@ -378,6 +400,7 @@ def createTransfer(accountnumber, accounttype, payeeaccountnumber, payeeaccountt
         result = response.json()
         print result
         return result
+'''
 
 #####
 ##### AWS Polly for Text to Speech
