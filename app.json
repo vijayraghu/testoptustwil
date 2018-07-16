@@ -1,7 +1,7 @@
 {
   "name": "Intent based IVR",
   "description": "ML Powered Conversational IVR",
-  "repository": "https://github.com/vijayraghu/bankteller",
+  "repository": "https://github.com/vijayraghu/optuscareforme",
   "logo": "",
   "keywords": ["python", "intent-based", "ivr"],
   "env": {
