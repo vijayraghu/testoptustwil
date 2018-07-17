@@ -101,318 +101,172 @@ def start():
 #####
 @app.route('/process_speech', methods=['GET', 'POST'])
 def process_speech():
-    user_id = request.values.get('CallSid')
-    polly_voiceid = request.values.get('polly_voiceid', "Joanna")
-    twilio_asr_language = request.values.get('twilio_asr_language', 'en-IN')
-    apiai_language = request.values.get('apiai_language', 'en')
-    prior_text = request.values.get('prior_text', 'Prior text missing')
-    input_text = request.values.get('SpeechResult', '')
-    confidence = float(request.values.get('Confidence', 0.0))
-    hostname = request.url_root
-    print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
-    
-    # Swapping the value if it has PII data
-    if re.search(r'\b\d{1,16}\b', input_text):
-        input_text = re.sub('(?<=\d) (?=\d)', '', input_text)
-        input_text1 = swap(input_text)
-        input_text = re.sub(r'\b\d{1,16}\b', input_text1, input_text)
-        print "Changed input: " + input_text
-    else:
-        #input_text1 = input_text
-        print "Unchanged input: " + input_text
-    sys.stdout.flush()
-    
-    resp = VoiceResponse()
-    if (confidence >= 0.0):
-
-        # Step 1: Call Dialogflow for intent analysis
-        intent_name, output_text = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
-
-        # Step 2: Construct TwiML
-        values = {'prior_text': output_text}
-        qs2 = urllib.urlencode(values)
-        action_url = '/process_speech?' + qs2
-        gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
-        values = {"text": output_text, 
-		  "polly_voiceid": polly_voiceid, 
-		  "region": "us-east-1"
-                     }
-	qs1 = urllib.urlencode(values)
-	print 'In-progress: Before polly tts'
-	gather.play(hostname + 'polly_text2speech?' + qs1)
-	print 'In progress: After polly tts'
-	resp.append(gather)
-
-        # If gather is missing (no speech input), redirect to process incomplete speech via Dialogflow
-        values = {'prior_text': output_text, 
-		  "polly_voiceid": polly_voiceid, 
-		  'twilio_asr_language': twilio_asr_language, 
-		  'apiai_language': apiai_language, 
-		  'SpeechResult': '', 
-		  'Confidence': 0.0
-		 }
-        qs3 = urllib.urlencode(values)
-        action_url = '/process_speech?' + qs3
-        resp.redirect(action_url)	
-    else:
-        # When confidence of speech recogniton is not enough, replay the prior conversation
-        output_text = prior_text
-        values = {"prior_text": output_text,
-                  "polly_voiceid": polly_voiceid,
-                  "twilio_asr_language": twilio_asr_language,
-                  "apiai_language": apiai_language}
-        qs2 = urllib.urlencode(values)
-        action_url = "/process_speech?" + qs2
-        gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
-        values = {"text": output_text,
-                  "polly_voiceid": polly_voiceid,
-                  "region": "us-east-1"
-                  }
-        qs1 = urllib.urlencode(values)
-        print 'Before calling polly tts'
-        gather.play(hostname + 'polly_text2speech?' + qs1)
-        print 'After polly tts read'
-        resp.append(gather)
-        values = {"prior_text": output_text,
-                  "polly_voiceid": polly_voiceid,
-                  "twilio_asr_language": twilio_asr_language,
-                  "apiai_language": apiai_language
-		 }
-	qs2 = urllib.urlencode(values)
-        action_url = "/process_speech?" + qs2
-        resp.redirect(action_url)
+	caller_phone_number = request.values.get('From')
+	user_id = request.values.get('CallSid')
+	polly_voiceid = request.values.get('polly_voiceid', "Joanna")
+	twilio_asr_language = request.values.get('twilio_asr_language', 'en-IN')
+	apiai_language = request.values.get('apiai_language', 'en')
+	prior_text = request.values.get('prior_text', 'Prior text missing')
+	input_text = request.values.get('SpeechResult', '')
+	confidence = float(request.values.get('Confidence', 0.0))
+	hostname = request.url_root
+	print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
+	sys.stdout.flush()
+	resp = VoiceResponse()
 	
-    print str(resp)
-    return str(resp)
+	if (confidence >= 0.0):
+		# Step 1: Call Dialogflow for intent analysis
+		intent_name, output_text = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
+		
+		# Step 2: Speech input processing by Twilio
+		values = {'prior_text': output_text}
+        	qs2 = urllib.urlencode(values)
+        	action_url = '/process_speech?' + qs2
+        	gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
+        	values = {"text": output_text, 
+			  "polly_voiceid": polly_voiceid, 
+			  "region": "us-east-1"
+			 }
+		qs1 = urllib.urlencode(values)
+		print 'In-progress: Before polly tts'
+		gather.play(hostname + 'polly_text2speech?' + qs1)
+		print 'In progress: After polly tts'
+		resp.append(gather)
+		
+		# If gather is missing (no speech input), redirect to process incomplete speech via Dialogflow
+		values = {'prior_text': output_text, 
+			  "polly_voiceid": polly_voiceid, 
+			  'twilio_asr_language': twilio_asr_language, 
+			  'apiai_language': apiai_language, 
+			  'SpeechResult': '', 
+			  'Confidence': 0.0
+			 }
+		qs3 = urllib.urlencode(values)
+		action_url = '/process_speech?' + qs3
+		resp.redirect(action_url)
+	
+	else:
+		# When confidence of speech recogniton is not enough, replay the previous conversation
+        	output_text = prior_text
+        	values = {"prior_text": output_text, 
+			  "polly_voiceid": polly_voiceid, 
+			  "twilio_asr_language": twilio_asr_language, 
+			  "apiai_language": apiai_language
+			 }
+		qs2 = urllib.urlencode(values)
+		action_url = "/process_speech?" + qs2
+		gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
+		values = {"text": output_text, 
+			  "polly_voiceid": polly_voiceid, 
+			  "region": "us-east-1"
+			 }
+		qs1 = urllib.urlencode(values)
+		print 'Before calling polly tts'
+		gather.play(hostname + 'polly_text2speech?' + qs1)
+		print 'After polly tts read'
+		resp.append(gather)
+		values = {"prior_text": output_text, 
+			  "polly_voiceid": polly_voiceid, 
+			  "twilio_asr_language": twilio_asr_language, 
+			  "apiai_language": apiai_language
+			 }
+		qs2 = urllib.urlencode(values)
+		action_url = "/process_speech?" + qs2
+		resp.redirect(action_url)
+		
+	print str(resp)
+	return str(resp)
 
 #####
 ##### Google Dialogflow - Intent identification from text
 #####
 #@app.route('/apiai_text_to_intent', methods=['GET', 'POST'])
 def apiai_text_to_intent(apiapi_client_access_key, input_text, user_id, language):
-    headers = {
-        'authorization': "Bearer " + apiapi_client_access_key,
-        'content-type': "application/json"
-    }
-    payload = {'query': input_text,
-               'lang': language,
-               'sessionId': user_id
-    }
-    response = requests.request("POST", url=apiai_url, data=json.dumps(payload), headers=headers, params=apiai_querystring)
-    output = json.loads(response.text)
-    print json.dumps(output, indent=2)
-    try:
-        output_text = output['result']['fulfillment']['speech']
-    except:
-        output_text = ""
-    try:
-        intent_stage = output['result']['contexts']
-    except:
-        intent_stage = "unknown"
-    return intent_stage, output_text #, dialog_state
-
-#####
-##### Reversing Values
-#####
-def swap(text):
-    actual = re.findall(r'\b\d{1,16}\b', text)
-    actvalue = actual[0]
-    text = actvalue[::-1]
-    print "Swap function result: " + text
-    return text
+	headers = {
+		'authorization': "Bearer " + apiapi_client_access_key, 
+		'content-type': "application/json"
+	}
+	payload = {'query': input_text, 
+		   'lang': language, 
+		   'sessionId': user_id
+		  }
+	response = requests.request("POST", url=apiai_url, data=json.dumps(payload), headers=headers, params=apiai_querystring)
+	output = json.loads(response.text)
+	print json.dumps(output, indent=2)
+	# Get values from Dialogflow
+	try:
+		intent_name = output['result']['intentname']
+	except
+		intent_name= ""
+	try:
+		output_text = output['result']['fulfillment']['speech']
+	except:
+		output_text = ""
+    	return intent_name, output_text
 
 #####
 ##### Dialogflow fulfillment webhook
 #####
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    req = request.get_json(silent=True, force=True)
-    print 'Request:'
-    print json.dumps(req, indent=4)
-    res = processRequest(req)
-    res = json.dumps(res, indent=4)
-    r = make_response(res)
-    r.headers['Content-Type'] = 'application/json'
-    return r
+	req = request.get_json(silent=True, force=True)
+	print 'Request:'
+	print json.dumps(req, indent=4)
+	res = processRequest(req)
+	res = json.dumps(res, indent=4)
+	r = make_response(res)
+	r.headers['Content-Type'] = 'application/json'
+	return r
 
 def processRequest(req):
-    result = req.get('result')
-    metadata = result.get('metadata')
-    intentname = metadata.get('intentName')
-    parameters = result.get('parameters')
-    actionname = parameters.get('action')
-    move_category = parameters.get('move_category')
-    accno = parameters.get('accnum')
-    print "Sent account Number is: " + str(accno)
-    #payeeacc = parameters.get('transaccnum')
-    #payeeaccounttype = parameters.get('transtype')
-    #transamount = parameters.get('amount')
-    #phoneNo = parameters.get('phonenumber')
-
-    # Transfer for moving home
-    if intentname == 'moving_home':
-        #accnumb = str(accno)
-        #accountnumber = swap(accnumb)
-        #print 'Account number:' + accountnumber
-	#response = VoiceResponse()
-	#response.dial('+917338856833')
-        #Balance = getBalance(accountnumber, accounttype)
-	speech = 'Kindly hold on while we connect you to one of our customer service agent who will help you with your Moving in request'
-        #speech = 'Your ' + accounttype + ' account balance is ' \
-            #+ Balance + ' dollars. Is there anything else I can help you with today? You can check for your last purchase or last transfer or just hangup.'
+	caller_phone_number = request.values.get('From')
+	result = req.get('result')
+	metadata = result.get('metadata')
+	intentname = metadata.get('intentName')
+	parameters = result.get('parameters')
+	actionname = parameters.get('action')
+	emp_id = parameters.get('employee_number')
+	product_name = parameters.get('optus_product')
+	
+	# Process employee number
+	if intentname == 'get_employee_number_cartwright_yes':
+		#Validate employee number
+		if int(str(emp_id)[:2]) != '10':
+			speech = 'This is not a valid employee number. Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		else:
+			speech = 'Thanks for providing your Employee number. Please let us know the reason for your call'
+	
+    	# Transfer for Billing_services
+    	elif intentname == 'billing_services_cartwright':
+		speech = 'Kindly hold on while we connect you to one of our customer service agent'
+		response = VoiceResponse()
+		response.dial('+917338856833')
+	
+    	# Transfer for Sales_services   
+    	elif intentname == 'sales_services_cartwright':
+		speech = 'Kindly hold on while we connect you to one of our customer service agent'
+		response = VoiceResponse()
+		response.dial('+917338856833')
+	
+    	# Transfer for Tech_services
+    	elif intentname == 'tech_services_cartwright':
+		speech = 'Kindly hold on while we connect you to one of our customer service agent'
+		response = VoiceResponse()
+		response.dial('+917338856833')
 		
-        
-    # Transfer for Water meter
-    elif intentname == 'water_meter':
-	#response = VoiceResponse()
-	#response.dial('+917338856833')	
-	speech = 'Kindly hold on while we connect you to one of our customer service agent who will help you with your Water Meter request'
-        '''
-	accnumb = str(accno)
-        accountnumber = swap(accnumb)
-        print 'Account number:' + accountnumber
-        lasttransfer = getLasttransfer(accountnumber, accounttype)
-        Amount = lasttransfer[0][u'amount']
-        Transferamount = str(Amount)
-        date = lasttransfer[0][u'transaction_date']
-        Transferdate = str(date)
-        speech = 'The last transfer you made was for ' + Transferamount \
-            + ' dollars on ' + Transferdate + '.Is there anything else I can help you with today? You can check for your balance or last transfer or just hangup.'
-        '''
-	
-    # Transfer for pay bill   
-    elif intentname == 'pay_bill':
-        accnumb = str(accno)
-        accountnumber = swap(accnumb)
-        print 'Account number:' + accountnumber
-	speech = 'Kindly hold on while we connect you to our automated payment hotline. Kindly follow the instructions to make your payment through your credit or debit card'
-        '''
-	lastpurchase = getLastpurchase(accountnumber, accounttype)
-        Amount = lastpurchase[0][u'amount']
-        Purchaseamount = str(Amount)
-        date = lastpurchase[0][u'purchase_date']
-        Purchasedate = str(date)
-        speech = 'The last purchase you made was for ' + Purchaseamount \
-            + ' dollars on ' + Purchasedate + '.Is there anything else I can help you with today? You can check for your balance or last purchase or just hangup.'
-        '''
-	
-    # Transfer for amending direct debit
-    elif intentname == 'amend_direct_debit':
-        accnumb = str(accno)
-        accountnumber = swap(accnumb)
-        print 'Account number:' + accountnumber
-	speech = 'Kindly hold on while we connect you to our automated payment hotline. Kindly follow the instructions to make your payment through your credit or debit card'
-	'''
-        payeeaccnumb = str(payeeacc)
-        payeeaccountnumber = swap(payeeaccnumb)
-        print 'Payee Account number:' + payeeaccountnumber
-        xferamount = str(transamount)
-        transferamount = swap(xferamount)
-        print 'Transfer amount:' + transferamount
-        result = createTransfer(accountnumber, accounttype, payeeaccountnumber,
-                                payeeaccounttype, transferamount)
-        responsecode = result[u'code']
-        transId = result[u'objectCreated'][u'_id']
-        if responsecode == 201:
-            speech = \
-                'Your transfer request is successful. Your transaction id is ' \
-                + transId
-        else:
-            speech = 'Your transfer is not successful'
-	'''
-     # Transfer for setting up direct debit
-    elif intentname == 'setup_directdebit':
-        accnumb = str(accno)
-        accountnumber = swap(accnumb)
-        print 'Account number:' + accountnumber
-	speech = 'Kindly hold on while we connect you to our automated payment hotline. Kindly follow the instructions to make your payment through your credit or debit card'	
-	
-    else:
-        speech = \
-            'I am sorry. We are experiencing some technical difficulty. Please call again later'
-
-    return {'speech': speech, 'displayText': speech,
-            'source': 'apiai-account-sample'}  # "data": data, # "contextOut": [],
-    return res
-'''    
-#Helper function for Balance
-def getBalance(accountnumber, accounttype):
-    with open('details.json') as json_file:
-        details = json.load(json_file)
-        print apiKey, accountnumber
-        accountId = details[accountnumber][accounttype]
-        print accountId
-        url = \
-            'http://api.reimaginebanking.com/accounts/{}?key={}'.format(accountId,
-                apiKey)
-        print url
-        response = requests.get(url,
-                                headers={'content-type': 'application/json'
-                                })
-        result = response.json()
-        accountbalance = result[u'balance']
-        Balance = str(accountbalance)
-        return Balance
-
-#Helper function for Last Transfer
-def getLasttransfer(accountnumber, accounttype):
-    with open('details.json') as json_file:
-        details = json.load(json_file)
-        print apiKey, accountnumber
-        accountId = details[accountnumber][accounttype]
-        print accountId
-        url = \
-            'http://api.reimaginebanking.com/accounts/{}/transfers?type=payer&key={}'.format(accountId,
-                apiKey)
-        response = requests.get(url,
-                                headers={'content-type': 'application/json'
-                                })
-        lasttransfer = response.json()
-        return lasttransfer
-
-#Helper function for Last Purchase
-def getLastpurchase(accountnumber, accounttype):
-    with open('details.json') as json_file:
-        details = json.load(json_file)
-        print apiKey, accountnumber
-        accountId = details[accountnumber][accounttype]
-        print accountId
-        url = \
-            'http://api.reimaginebanking.com/accounts/{}/purchases?key={}'.format(accountId,
-                apiKey)
-        response = requests.get(url,
-                                headers={'content-type': 'application/json'
-                                })
-        lastpurchase = response.json()
-        return lastpurchase
-    
-#Helper function for Transfer funds
-def createTransfer(accountnumber, accounttype, payeeaccountnumber, payeeaccounttype, transferamount):
-    print 'i am here'
-    with open('details.json') as json_file:
-        details = json.load(json_file)
-        dateObject = datetime.date.today()
-        dateString = dateObject.strftime('%Y-%m-%d')
-        payeraccountId = details[accountnumber][accounttype]
-        payeeaccountId = details[payeeaccountnumber][payeeaccounttype]
-        print payeeaccountId, payeraccountId
-        url = \
-            'http://api.reimaginebanking.com/accounts/{}/transfers?key={}'.format(payeraccountId,
-                apiKey)
-        payload = {
-            'medium': 'balance',
-            'payee_id': payeeaccountId,
-            'amount': float(transferamount),
-            'transaction_date': dateString,
-            'description': 'Personal',
-            }
-        response = requests.post(url, data=json.dumps(payload),
-                                 headers={'content-type': 'application/json'
-                                 })
-        result = response.json()
-        print result
-        return result
-'''
+    	# Transfer to General services if employee number is not provided
+    	elif intentname == 'no_employee_number_cartwright':
+		speech = 'Kindly hold on while we connect you to one of our customer service agent'
+		response = VoiceResponse()
+		response.dial('+917338856833')
+		
+	# Catch all error/exception scenarios and transfer to General services
+	else:
+		speech = 'Kindly hold on while we connect you to one of our customer service agent'
+		response = VoiceResponse()
+		response.dial('+917338856833')
 
 #####
 ##### AWS Polly for Text to Speech
@@ -420,34 +274,34 @@ def createTransfer(accountnumber, accounttype, payeeaccountnumber, payeeaccountt
 #####
 @app.route('/polly_text2speech', methods=['GET', 'POST'])
 def polly_text2speech():
-    print 'Inside polly tts method'
-    text = request.args.get('text', "Hello! Invalid request. Please provide the TEXT value")
-    voiceid = request.args.get('polly_voiceid', "Joanna")
-    region = request.args.get('region', "us-east-1")
-    # Create a client using the credentials and region
-    polly = boto3.client("polly", aws_access_key_id = aws_access_key_id, aws_secret_access_key = aws_secret_key, region_name=region)
-    # Request speech synthesis
-    response = polly.synthesize_speech(Text=text, SampleRate="8000", OutputFormat="mp3", VoiceId=voiceid)
-
-    # Access the audio stream from the response
-    if "AudioStream" in response:
-        # Note: Closing the stream is important as the service throttles on the
-        # number of parallel connections. Here we are using contextlib.closing to
-        # ensure the close method of the stream object will be called automatically
-        # at the end of the with statement's scope.
-        def generate():
-            print 'inside polly tts generate method'
-            with closing(response["AudioStream"]) as dmp3:
-                data = dmp3.read(1024)
-                while data:
-                    yield data
-                    data = dmp3.read(1024)
-            print 'generate complete for polly tts'
-        return Response(generate(), mimetype="audio/mpeg")
-    else:
-        # The response didn't contain audio data, exit gracefully
-        print("Could not stream audio")
-        return "Error"
+    	print 'Inside polly tts method'
+    	text = request.args.get('text', "Hello! Invalid request. Please provide the TEXT value")
+    	voiceid = request.args.get('polly_voiceid', "Joanna")
+    	region = request.args.get('region', "us-east-1")
+    	# Create a client using the credentials and region
+    	polly = boto3.client("polly", aws_access_key_id = aws_access_key_id, aws_secret_access_key = aws_secret_key, region_name=region)
+    	# Request speech synthesis
+    	response = polly.synthesize_speech(Text=text, SampleRate="8000", OutputFormat="mp3", VoiceId=voiceid)
+	
+	# Access the audio stream from the response
+	if "AudioStream" in response:
+		# Note: Closing the stream is important as the service throttles on the
+		# number of parallel connections. Here we are using contextlib.closing to
+		# ensure the close method of the stream object will be called automatically
+		# at the end of the with statement's scope.
+		def generate():
+			print 'inside polly tts generate method'
+			with closing(response["AudioStream"]) as dmp3:
+				data = dmp3.read(1024)
+				while data:
+					yield data
+					data = dmp3.read(1024)
+			print 'generate complete for polly tts'
+		return Response(generate(), mimetype="audio/mpeg")
+    	else:
+		# The response didn't contain audio data, exit gracefully
+		print("Could not stream audio")
+        	return "Error"
     
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug = True)
+	app.run(host='0.0.0.0', debug = True)
