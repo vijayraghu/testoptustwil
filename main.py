@@ -49,8 +49,8 @@ def start():
 	resp = VoiceResponse()
 	
 	# Check for HOOP (hours of operations)
-	start = datetime.time(8, 30)
-	end = datetime.time(18, 00)
+	start = datetime.time(0, 00)
+	end = datetime.time(23, 59)
 	timestamp = datetime.datetime.now().time()
 	if (start <= timestamp <= end):
 		values = {"text": 'Our office hours are from 08:30 AM till 18:00 PM on weekdays. Kindly hold while we transfer your call to our general assistance line and a customer service representative will assist you', 
