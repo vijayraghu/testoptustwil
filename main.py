@@ -21,7 +21,7 @@ apiai_url = "https://api.api.ai/v1/query"
 apiai_querystring = {"v": "20150910"}
 
 # Setup hints for better speech recognition
-hints = "1,2,3,4,5,6,7,8,9,0, 1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, account acount akount, january, february, march, april, may, june, july, august, september, october, november, december"
+hints = "1,2,3,4,5,6,7,8,9,0, 1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, 0 zero o, account acount akount, january, february, march, april, may, june, july, august, september, october, november, december"
 
 app = Flask(__name__)
 
