@@ -113,6 +113,10 @@ def process_speech():
 	confidence = float(request.values.get('Confidence', 0.0))
 	hostname = request.url_root
 	print "Twilio Speech to Text: " + input_text + " Confidence: " + str(confidence)
+	#Check for any blanks between digits (both for employee number and mobile number)
+	if re.search(r'\b\d{1,16}\b', input_text):
+		input_text = re.sub('(?<=\d) (?=\d)', '', input_text)
+		print "Changed input: " + input_text
 	sys.stdout.flush()
 	resp = VoiceResponse()
 	
