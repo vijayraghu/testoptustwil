@@ -63,6 +63,7 @@ def start():
 		print 'In start: after polly TTS'
 		#resp.append(gather)
 		resp.dial('+919840610434')
+		return str(resp)
 	
 	else:
 		# If call within office hours, prepare for collecting subsequent user input
