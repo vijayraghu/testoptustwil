@@ -27,57 +27,74 @@ app = Flask(__name__)
 
 @app.route('/start', methods=['GET','POST'])
 def start():
-    caller_phone_number = request.values.get('From')
-    user_id = request.values.get('CallSid')
-    polly_voiceid = request.values.get('polly_voiceid', 'Joanna')
-    twilio_asr_language = request.values.get('twilio_asr_language', 'en-IN')
-    apiai_language = request.values.get('apiai_language', 'en')
-    hostname = request.url_root
+	caller_phone_number = request.values.get('From')
+	user_id = request.values.get('CallSid')
+	polly_voiceid = request.values.get('polly_voiceid', 'Joanna')
+	twilio_asr_language = request.values.get('twilio_asr_language', 'en-IN')
+	apiai_language = request.values.get('apiai_language', 'en')
+	hostname = request.url_root
 
     # Triggering Dialogflow agent "Welcome" event
     headers = {'authorization': 'Bearer ' + apiai_client_access_key,
                'content-type': 'application/json'}
-    payload = {'event': {'name': 'Welcome',
-               'data': {'user_name': caller_name}},
-               'lang': apiai_language, 'sessionId': user_id}
-    
+    payload = {'event': {'name': 'Welcome', 
+			 'lang': apiai_language, 
+			 'sessionId': user_id
+			}
     response = requests.request("POST", url=apiai_url, data=json.dumps(payload), headers=headers, params=apiai_querystring)
     print response.text
     output = json.loads(response.text)
     output_text = output['result']['fulfillment']['speech']
     output_text = output_text.decode('utf-8')
     resp = VoiceResponse()
-
-    # Prepare for next set of user Speech
-    values = {'prior_text': output_text}
-    qs = urllib.urlencode(values)
-    action_url = '/process_speech?' + qs
-    gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
     
-    # TTS dialogflow response
-    values = {"text": output_text,
-              "polly_voiceid": polly_voiceid,
-              "region": "us-east-1"
-             }
-    qs = urllib.urlencode(values)
-    print 'In start: before polly TTS'
-    gather.play(hostname + 'polly_text2speech?' + qs)
-    print 'In start: after polly TTS'
-    resp.append(gather)
-
-    # If gather is missing (no speech input), redirect to /process_speech again
-    values = {'prior_text': output_text,
-              "polly_voiceid": polly_voiceid,
-              'twilio_asr_language': twilio_asr_language,
-              'apiai_language': apiai_language,
-              'SpeechResult': '',
-              'Confidence': 0.0
-             }
-    qs = urllib.urlencode(values)
-    action_url = '/process_speech?' + qs
-    resp.redirect(action_url)
-    print str(resp)
-    return str(resp)
+    # Check for HOOP (hours of operations)
+    start = datetime.time(8, 30)
+    end = datetime.time(18, 00)
+    timestamp = datetime.datetime.now().time()
+    if (start <= timestamp <= end) == false):
+			   values = {"text": 'Our office hours are from 08:30 AM till 18:00 PM on weekdays. Kindly hold while we transfer your call to our general assistance line and a customer service representative will assist you', 
+						 "polly_voiceid": polly_voiceid, 
+						 "region": "us-east-1"
+						}
+			   qs = urllib.urlencode(values)
+			   print 'In start: before polly TTS'
+			   gather.play(hostname + 'polly_text2speech?' + qs)
+			   print 'In start: after polly TTS'
+			   resp.append(gather)
+			   resp.dial('+919840610434')
+	
+	else:
+			   # If call within office hours, prepare for collecting subsequent user input
+			   values = {'prior_text': output_text}
+			   qs = urllib.urlencode(values)
+			   action_url = '/process_speech?' + qs
+			   gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
+			   
+			   # Welcome prompt played to callers during office hours
+			   values = {"text": output_text, 
+						 "polly_voiceid": polly_voiceid, 
+						 "region": "us-east-1"
+						}
+			   qs = urllib.urlencode(values)
+			   print 'In start: before polly TTS'
+			   gather.play(hostname + 'polly_text2speech?' + qs)
+			   print 'In start: after polly TTS'
+			   resp.append(gather)
+			   
+			   # If user input is missing after welcome prompt (no speech input), redirect to collect speech input again
+			   values = {'prior_text': output_text, 
+						 'polly_voiceid': polly_voiceid,
+						 'twilio_asr_language': twilio_asr_language,
+						 'apiai_language': apiai_language, 
+						 'SpeechResult': '', 
+						 'Confidence': 0.0
+						}
+			   qs = urllib.urlencode(values)
+			   action_url = '/process_speech?' + qs
+			   resp.redirect(action_url)
+			   print str(resp)
+			   return str(resp)
     
 #####
 ##### Process Twilio ASR: Text to Intent analysis
