@@ -34,25 +34,12 @@ def start():
 	apiai_language = request.values.get('apiai_language', 'en')
 	hostname = request.url_root
 	
-	# Triggering Dialogflow agent "Welcome" event
-	headers = {'authorization': 'Bearer ' + apiai_client_access_key, 
-		   'content-type': 'application/json'}
-	payload = {'event': {'name': 'Welcome'}, 
-			     'lang': apiai_language, 
-			     'sessionId': user_id
-		  }
-	response = requests.request("POST", url=apiai_url, data=json.dumps(payload), headers=headers, params=apiai_querystring)
-	print response.text
-	output = json.loads(response.text)
-	output_text = output['result']['fulfillment']['speech']
-	output_text = output_text.decode('utf-8')
-	resp = VoiceResponse()
-	
 	# Check for HOOP (hours of operations)
 	start = datetime.time(0, 00)
 	end = datetime.time(23, 59)
 	timestamp = datetime.datetime.now().time()
-	if (start <= timestamp <= end):
+	if (end <= timestamp >= start):
+		# If call time not within hours of operation, play appropriate prompt and transfer to general line
 		values = {"text": 'Our office hours are from 08:30 AM till 18:00 PM on weekdays. Kindly hold while we transfer your call to our general assistance line and a customer service representative will assist you', 
 			  "polly_voiceid": polly_voiceid, 
 			  "region": "us-east-1"
@@ -63,10 +50,24 @@ def start():
 		print 'In start: after polly TTS'
 		#resp.append(gather)
 		resp.dial('+919840610434')
-		return str(resp)
-	
+		return str(resp)	
 	else:
-		# If call within office hours, prepare for collecting subsequent user input
+		# If call within office hours, triggering Dialogflow "Welcome" event
+		headers = {'authorization': 'Bearer ' + apiai_client_access_key, 
+			   'content-type': 'application/json'
+			  }
+		payload = {'event': {'name': 'Welcome'}, 
+			   'lang': apiai_language, 
+			   'sessionId': user_id
+			  }
+		response = requests.request("POST", url=apiai_url, data=json.dumps(payload), headers=headers, params=apiai_querystring)
+		print response.text
+		output = json.loads(response.text)
+		output_text = output['result']['fulfillment']['speech']
+		output_text = output_text.decode('utf-8')
+		resp = VoiceResponse()
+		
+		# Prepare for collecting subsequent user input
 		values = {'prior_text': output_text}
 		qs = urllib.urlencode(values)
 		action_url = '/process_speech?' + qs
