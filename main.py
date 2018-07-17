@@ -59,7 +59,7 @@ def start():
 			 }
 		qs = urllib.urlencode(values)
 		print 'In start: before polly TTS'
-		gather.play(hostname + 'polly_text2speech?' + qs)
+		resp.play(hostname + 'polly_text2speech?' + qs)
 		print 'In start: after polly TTS'
 		resp.append(gather)
 		resp.dial('+919840610434')
