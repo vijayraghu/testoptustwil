@@ -17,12 +17,8 @@ import datetime
 apiai_client_access_key = os.environ["APIAPI_CLIENT_ACCESS_KEY"]
 aws_access_key_id = os.environ["AWS_ACCESS_KEY_ID"]
 aws_secret_key = os.environ["AWS_SECRET_KEY"]
-#apiKey = os.environ["NESSIE_API_KEY"]
 apiai_url = "https://api.api.ai/v1/query"
 apiai_querystring = {"v": "20150910"}
-registered_users = {"+919840610434": "Vijay",
-                   "+914444461324": "Vijay"
-}
 
 # Setup hints for better speech recognition
 hints = "1,2,3,4,5,6,7,8,9,0, 1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, account acount akount, january, february, march, april, may, june, july, august, september, october, november, december"
@@ -36,13 +32,12 @@ def start():
     polly_voiceid = request.values.get('polly_voiceid', 'Joanna')
     twilio_asr_language = request.values.get('twilio_asr_language', 'en-IN')
     apiai_language = request.values.get('apiai_language', 'en')
-    caller_name = registered_users.get(caller_phone_number, ' ')
     hostname = request.url_root
 
-    # Initialize Dialogflow agent
+    # Triggering Dialogflow agent "Welcome" event
     headers = {'authorization': 'Bearer ' + apiai_client_access_key,
                'content-type': 'application/json'}
-    payload = {'event': {'name': 'welcome',
+    payload = {'event': {'name': 'Welcome',
                'data': {'user_name': caller_name}},
                'lang': apiai_language, 'sessionId': user_id}
     
