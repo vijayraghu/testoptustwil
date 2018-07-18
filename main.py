@@ -231,13 +231,13 @@ def processRequest(req):
 	intentname = metadata.get('intentName')
 	parameters = result.get('parameters')
 	actionname = parameters.get('action')
-	emp_id = parameters.get('employee_number')
+	emp_id = parameters.get('employee_id')
 	product_name = parameters.get('optus_product')
 	
 	# Process employee number
 	if intentname == 'get_employee_number_cartwright_yes':
 		#Validate employee number
-		if int(str(emp_id)[:2]) != '10':
+		if (str(emp_id)[:2]) != '10':
 			speech = 'This is not a valid employee number. Kindly hold on while we connect you to one of our customer service agent'
 			#response = VoiceResponse()
 			#response.dial('+917338856833')
