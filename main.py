@@ -21,7 +21,7 @@ apiai_url = "https://api.api.ai/v1/query"
 apiai_querystring = {"v": "20150910"}
 
 # Setup hints for better speech recognition
-hints = "1,2,3,4,5,6,7,8,9,0, 1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, 0 zero o, account acount akount, january, february, march, april, may, june, july, august, september, october, november, december"
+hints = "1,2,3,4,5,6,7,8,9,0, 1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, 0 zero o, account acount akount, mobile,roaming, top up topup,channels channel,tv TV, broadband broad band,fetch,extension,iphone,cable,recharge,recharging,optus Optus, "
 
 app = Flask(__name__)
 
@@ -239,8 +239,8 @@ def processRequest(req):
 		#Validate employee number
 		if int(str(emp_id)[:2]) != '10':
 			speech = 'This is not a valid employee number. Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		else:
 			speech = 'Thanks for providing your employee number. How can we help you today?'
 	
@@ -248,94 +248,94 @@ def processRequest(req):
     	elif intentname == 'billing_services_cartwright':
 		if product_name == 'Postpaid':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Prepaid':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Mobile Broadband':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Internet':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Telephony':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Optus TV':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Financial Services':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 	
     	# Transfer for Sales_services   
     	elif intentname == 'sales_services_cartwright':
 		if product_name == 'Postpaid':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Prepaid':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Mobile Broadband':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Internet':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Telephony':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Optus TV':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Financial Services':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 	
     	# Transfer for Tech_services
     	elif intentname == 'tech_services_cartwright':
 		if product_name == 'Postpaid':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Prepaid':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Mobile Broadband':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Internet':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Telephony':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Optus TV':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 		elif product_name == 'Financial Services':
 			speech = 'Kindly hold on while we connect you to one of our customer service agent'
-			response = VoiceResponse()
-			response.dial('+917338856833')
+			#response = VoiceResponse()
+			#response.dial('+917338856833')
 			
     	# Transfer to General services if employee number is not provided
     	elif intentname == 'no_employee_number_cartwright':
@@ -347,8 +347,8 @@ def processRequest(req):
 	# Catch all error/exception scenarios and transfer to General services
 	else:
 		speech = 'Kindly hold on while we connect you to one of our customer service agent'
-		response = VoiceResponse()
-		response.dial('+917338856833')
+		#response = VoiceResponse()
+		#response.dial('+917338856833')
 	
 	return {'speech': speech, 'displayText': speech, 
 		'source': 'careforyou'
