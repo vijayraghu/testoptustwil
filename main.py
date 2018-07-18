@@ -242,26 +242,101 @@ def processRequest(req):
 			response = VoiceResponse()
 			response.dial('+917338856833')
 		else:
-			speech = 'Thanks for providing your Employee number. Please let us know the reason for your call'
+			speech = 'Thanks for providing your employee number. How can we help you today?'
 	
     	# Transfer for Billing_services
     	elif intentname == 'billing_services_cartwright':
-		speech = 'Kindly hold on while we connect you to one of our customer service agent'
-		response = VoiceResponse()
-		response.dial('+917338856833')
+		if product_name == 'Postpaid':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Prepaid':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Mobile Broadband':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Internet':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Telephony':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Optus TV':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Financial Services':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
 	
     	# Transfer for Sales_services   
     	elif intentname == 'sales_services_cartwright':
-		speech = 'Kindly hold on while we connect you to one of our customer service agent'
-		response = VoiceResponse()
-		response.dial('+917338856833')
+		if product_name == 'Postpaid':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Prepaid':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Mobile Broadband':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Internet':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Telephony':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Optus TV':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Financial Services':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
 	
     	# Transfer for Tech_services
     	elif intentname == 'tech_services_cartwright':
-		speech = 'Kindly hold on while we connect you to one of our customer service agent'
-		response = VoiceResponse()
-		response.dial('+917338856833')
-		
+		if product_name == 'Postpaid':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Prepaid':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Mobile Broadband':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Internet':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Telephony':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Optus TV':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+		elif product_name == 'Financial Services':
+			speech = 'Kindly hold on while we connect you to one of our customer service agent'
+			response = VoiceResponse()
+			response.dial('+917338856833')
+			
     	# Transfer to General services if employee number is not provided
     	elif intentname == 'no_employee_number_cartwright':
 		speech = 'Kindly hold on while we connect you to one of our customer service agent'
