@@ -340,8 +340,8 @@ def processRequest(req):
     	# Transfer to General services if employee number is not provided
     	elif intentname == 'no_employee_number_cartwright':
 		speech = 'Kindly hold on while we connect you to one of our customer service agent'
-		response = VoiceResponse()
-		response.dial('+917338856833')
+		#response = VoiceResponse()
+		#response.dial('+917338856833')
 		
 	# Catch all error/exception scenarios and transfer to General services
 	else:
