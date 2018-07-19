@@ -35,9 +35,10 @@ def start():
 	hostname = request.url_root
 	
 	# Check for HOOP (hours of operations)
-	start = datetime.time(0, 00)
-	end = datetime.time(23, 59)
+	start = datetime.time(8, 00)
+	end = datetime.time(9, 00)
 	timestamp = datetime.datetime.now().time()
+	resp = VoiceResponse()
 	if (end <= timestamp >= start):
 		# If call time not within hours of operation, play appropriate prompt and transfer to general line
 		values = {"text": 'Our office hours are from 08:30 AM till 18:00 PM on weekdays. Kindly hold while we transfer your call to our general assistance line and a customer service representative will assist you', 
@@ -214,7 +215,6 @@ def apiai_text_to_intent(apiapi_client_access_key, input_text, user_id, language
 ##### Dialogflow fulfillment webhook
 #####
 @app.route('/webhook', methods=['POST'])
-from twilio.twiml.voice_response import VoiceResponse, Gather, Say, Dial
 def webhook():
 	req = request.get_json(silent=True, force=True)
 	print 'Request:'
