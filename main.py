@@ -29,7 +29,7 @@ app = Flask(__name__)
 def start():
 	caller_phone_number = request.values.get('From')
 	user_id = request.values.get('CallSid')
-	polly_voiceid = request.values.get('polly_voiceid', 'Joanna')
+	polly_voiceid = request.values.get('polly_voiceid', 'Nicole')
 	twilio_asr_language = request.values.get('twilio_asr_language', 'en-IN')
 	apiai_language = request.values.get('apiai_language', 'en')
 	hostname = request.url_root
@@ -76,7 +76,7 @@ def start():
 		# Welcome prompt played to callers during office hours
 		values = {"text": output_text, 
 			  "polly_voiceid": polly_voiceid, 
-			  "region": "us-east-1"
+			  "region": "ap-southeast-2"
 			 }
 		qs = urllib.urlencode(values)
 		print 'In start: before polly TTS'
@@ -131,7 +131,7 @@ def process_speech():
         	gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
         	values = {"text": output_text, 
 			  "polly_voiceid": polly_voiceid, 
-			  "region": "us-east-1"
+			  "region": "ap-southeast-2"
 			 }
 		qs1 = urllib.urlencode(values)
 		print 'In-progress: Before polly tts'
@@ -164,7 +164,7 @@ def process_speech():
 		gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
 		values = {"text": output_text, 
 			  "polly_voiceid": polly_voiceid, 
-			  "region": "us-east-1"
+			  "region": "ap-southeast-2"
 			 }
 		qs1 = urllib.urlencode(values)
 		print 'Before calling polly tts'
@@ -367,8 +367,8 @@ def processRequest(req):
 def polly_text2speech():
     	print 'Inside polly tts method'
     	text = request.args.get('text', "Hello! Invalid request. Please provide the TEXT value")
-    	voiceid = request.args.get('polly_voiceid', "Joanna")
-    	region = request.args.get('region', "us-east-1")
+    	voiceid = request.args.get('polly_voiceid', "Nicole")
+    	region = request.args.get('region', "ap-southeast-2")
     	# Create a client using the credentials and region
     	polly = boto3.client("polly", aws_access_key_id = aws_access_key_id, aws_secret_access_key = aws_secret_key, region_name=region)
     	# Request speech synthesis
