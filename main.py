@@ -42,7 +42,7 @@ def start():
 		# If call time not within hours of operation, play appropriate prompt and transfer to general line
 		values = {"text": 'Our office hours are from 08:30 AM till 18:00 PM on weekdays. Kindly hold while we transfer your call to our general assistance line and a customer service representative will assist you', 
 			  "polly_voiceid": polly_voiceid, 
-			  "region": "us-east-1"
+			  "region": "ap-southeast-2"
 			 }
 		qs = urllib.urlencode(values)
 		print 'In start: before polly TTS'
