@@ -105,7 +105,7 @@ def start():
 def process_speech():
 	caller_phone_number = request.values.get('From')
 	user_id = request.values.get('CallSid')
-	polly_voiceid = request.values.get('polly_voiceid', "Joanna")
+	polly_voiceid = request.values.get('polly_voiceid', "Nicole")
 	twilio_asr_language = request.values.get('twilio_asr_language', 'en-IN')
 	apiai_language = request.values.get('apiai_language', 'en')
 	prior_text = request.values.get('prior_text', 'Prior text missing')
