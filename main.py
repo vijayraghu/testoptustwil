@@ -35,8 +35,8 @@ def start():
 	hostname = request.url_root
 	
 	# Check for HOOP (hours of operations)
-	start = datetime.time(8, 00)
-	end = datetime.time(9, 00)
+	start = datetime.time(0, 00)
+	end = datetime.time(23, 59)
 	timestamp = datetime.datetime.now().time()
 	resp = VoiceResponse()
 	if (end <= timestamp >= start):
