@@ -345,8 +345,17 @@ def processRequest(req):
 @app.route('/goog_text2speech', methods=['GET', 'POST'])
 def goog_text2speech():
 	text = request.args.get('text', "Hello! Invalid request. Please provide the TEXT value")
+	
+	# Pre-process the text 
 	if len(text) == 0:
-		text = "Hello! Invalid request. Please provide the TEXT value"
+		text = "We are experiencing technical difficulties at the moment. Please call back later."
+	
+	# Adding space between numbers for better synthesis
+	if re.search(r'\b\d{1,16}\b', text):
+		text = re.sub('(?<=\d)(?=\d)', ' ', text)
+		print "Changed input: " + text
+	
+	# Setting profile id
 	effects_profile_id = 'telephony-class-application'
 	
 	#Setting credentials -  Read env data
@@ -359,12 +368,8 @@ def goog_text2speech():
 	# Create Google Text-To-Speech client
     	client = texttospeech.TextToSpeechClient(credentials=credentials)
 	
-	# A quick hack - TO DO: will fix later
-	if text[0] == '<':
-		input_text = texttospeech.types.SynthesisInput(ssml=text)
-	else:
-		#pass the text to be synthesized by Google Text-To-Speech
-    		input_text = texttospeech.types.SynthesisInput(text=text)
+	#pass the text to be synthesized by Google Text-To-Speech
+	input_text = texttospeech.types.SynthesisInput(text=text)
 		
 	#Set the Google Text-To-Speech voice parameters
     	voice = texttospeech.types.VoiceSelectionParams(language_code='en-AU', name='en-AU-Wavenet-B', ssml_gender=texttospeech.enums.SsmlVoiceGender.MALE)
