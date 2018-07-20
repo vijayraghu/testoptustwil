@@ -382,16 +382,17 @@ def goog_text2speech():
 		out.write(response.audio_content)
 		print('Audio content written to file "output.mp3"')
 	
-	# Read the audio stream from the response
-	def generate():
-		print 'inside google tts generate method'
-		with closing(response["AudioStream"]) as dmp3:
-			data = dmp3.read(1024)
-			while data:
-				yield data
+	if response.audio_content:
+		# Read the audio stream from the response
+		def generate():
+			print 'inside google tts generate method'
+			with closing(response["AudioStream"]) as dmp3:
 				data = dmp3.read(1024)
-		print 'generate complete for google tts'
-		return Response(generate(), mimetype="audio/mpeg")
+				while data:
+					yield data
+					data = dmp3.read(1024)
+			print 'generate complete for google tts'
+			return Response(generate(), mimetype="audio/mpeg")
     	else:
 		# The response didn't contain audio data, exit gracefully
 		print("Could not stream audio")
