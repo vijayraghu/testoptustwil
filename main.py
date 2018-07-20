@@ -113,9 +113,6 @@ def process_speech():
 		# Step 1: Call Dialogflow for intent analysis
 		intent_name, output_text, product_name, emp_id, intent_stage = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
 		
-		if intent_name == 'get_employee_number_cartwright':
-			output_text = '<speak>The employee number you provided is <say-as interpret-as="digits">' + emp_id + '</say-as>. Please confirm by saying Yes or No </speak>'
-		
 		# Step 2: Speech input processing by Twilio
 		values = {'prior_text': output_text}
         	qs2 = urllib.urlencode(values)
