@@ -129,21 +129,22 @@ def process_speech():
 		if intent_name == 'Default Fallback Intent':
 			print 'reached default intent. Transfering...'
 			resp.dial('+917338856833')
-			return
+			resp.redirect('/process_close')
 		
 		# Perform employee number validation
 		if intent_name == 'get_employee_number_cartwright_yes':
 			#Validate employee number
 			if (str(emp_id)[:2]) != '10':
 				resp.dial('+919840610434')
-				return
+				resp.redirect('/process_close')
 		
 		# Transfer to routepoint based in intent and product	
 		print 'Intent :' + intent_name
 		if intent_name != '' and product_name != '':
 			phone_number = getroutepoint(intent_name, product_name)
 			resp.dial(phone_number)
-			return
+			resp.redirect('/process_close')
+			
 		#if intent_name in ['billing_services_cartwright','sales_services_cartwright']:
 			
 		# If gather is missing (no speech input), redirect to process incomplete speech via Dialogflow
@@ -176,6 +177,11 @@ def process_speech():
 	print str(resp)
 	return str(resp)
 
+@app.route('/process_close', methods=['GET', 'POST'])
+def process_close():
+	print 'in process_close'
+	
+	
 #####
 ##### Google Dialogflow - Intent identification from text
 #####
