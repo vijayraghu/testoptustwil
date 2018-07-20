@@ -1,6 +1,8 @@
 appdirs==1.4.0
 boto3==1.4.4
 botocore==1.5.58
+google-cloud-texttospeech==0.2.0
+google-oauth==1.0.1
 certifi==2017.4.17
 chardet==3.0.3
 click==6.7
