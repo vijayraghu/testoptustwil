@@ -392,7 +392,7 @@ def goog_text2speech():
 					yield data
 					data = dmp3.read(1024)
 			print 'generate complete for google tts'
-			return Response(generate(), mimetype="audio/mpeg")
+		return Response(generate(), mimetype="audio/mpeg")
     	else:
 		# The response didn't contain audio data, exit gracefully
 		print("Could not stream audio")
