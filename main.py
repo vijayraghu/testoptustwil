@@ -345,6 +345,8 @@ def processRequest(req):
 @app.route('/goog_text2speech', methods=['GET', 'POST'])
 def goog_text2speech():
 	text = request.args.get('text', "Hello! Invalid request. Please provide the TEXT value")
+	if len(text) == 0:
+		text = "Hello! Invalid request. Please provide the TEXT value"
 	effects_profile_id = 'telephony-class-application'
 	
 	#Setting credentials -  Read env data
@@ -357,9 +359,13 @@ def goog_text2speech():
 	# Create Google Text-To-Speech client
     	client = texttospeech.TextToSpeechClient(credentials=credentials)
 	
-	#pass the text to be synthesized by Google Text-To-Speech
-    	input_text = texttospeech.types.SynthesisInput(text=text)
-
+	# A quick hack - TO DO: will fix later
+	if text[0] == '<':
+		input_text = texttospeech.types.SynthesisInput(ssml=text)
+	else:
+		#pass the text to be synthesized by Google Text-To-Speech
+    		input_text = texttospeech.types.SynthesisInput(text=text)
+		
 	#Set the Google Text-To-Speech voice parameters
     	voice = texttospeech.types.VoiceSelectionParams(language_code='en-AU', name='en-AU-Wavenet-B', ssml_gender=texttospeech.enums.SsmlVoiceGender.MALE)
 
