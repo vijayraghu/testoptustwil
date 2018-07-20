@@ -8,20 +8,19 @@ from flask import Flask, request, Response, make_response, jsonify, url_for
 from contextlib import closing
 # Twilio Helper Library
 from twilio.twiml.voice_response import VoiceResponse, Gather, Say, Dial
-# AWS Python SDK
-import boto3
 import re
 import datetime
+# Google Text To Speech SDK
+from google.oauth2 import service_account
+from google.cloud import texttospeech_v1beta1 as texttospeech
 
 # Declare global variables
 apiai_client_access_key = os.environ["APIAPI_CLIENT_ACCESS_KEY"]
-aws_access_key_id = os.environ["AWS_ACCESS_KEY_ID"]
-aws_secret_key = os.environ["AWS_SECRET_KEY"]
 apiai_url = "https://api.api.ai/v1/query"
 apiai_querystring = {"v": "20150910"}
 
 # Setup hints for better speech recognition
-hints = "1,2,3,4,5,6,7,8,9,0, 1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, 0 zero o, account acount akount, mobile,roaming, top up topup,channels channel,tv TV, broadband broad band,fetch,extension,iphone,cable,recharge,recharging,optus Optus, "
+hints = "1,2,3,4,5,6,7,8,9,0, 1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, 0 zero o, account acount akount, mobile, roaming, top up topup,channels channel,tv TV, broadband broad band, fetch, extension, iphone, cable, recharge, recharging, optus Optus, Hey, EPL, English premier league, streaming, premier league"
 
 app = Flask(__name__)
 
@@ -29,7 +28,6 @@ app = Flask(__name__)
 def start():
 	caller_phone_number = request.values.get('From')
 	user_id = request.values.get('CallSid')
-	polly_voiceid = request.values.get('polly_voiceid', 'Nicole')
 	twilio_asr_language = request.values.get('twilio_asr_language', 'en-IN')
 	apiai_language = request.values.get('apiai_language', 'en')
 	hostname = request.url_root
@@ -41,17 +39,12 @@ def start():
 	resp = VoiceResponse()
 	if (end <= timestamp >= start):
 		# If call time not within hours of operation, play appropriate prompt and transfer to general line
-		values = {"text": 'Our office hours are from 08:30 AM till 18:00 PM on weekdays. Kindly hold while we transfer your call to our general assistance line and a customer service representative will assist you', 
-			  "polly_voiceid": polly_voiceid, 
-			  "region": "ap-southeast-2"
-			 }
-		qs = urllib.urlencode(values)
-		print 'In start: before polly TTS'
-		resp.play(hostname + 'polly_text2speech?' + qs)
-		print 'In start: after polly TTS'
-		#resp.append(gather)
+		values = {"text": 'Our office hours are from 08:30 AM till 18:00 PM on weekdays. Kindly hold while we transfer your call to our general assistance line and a customer service representative will assist you'}
+		print 'In start: before Google TTS'
+		resp.play(hostname + 'goog_text2speech?' + qs)
+		print 'In start: after Google TTS'
 		resp.dial('+919840610434')
-		return str(resp)	
+		return str(resp)
 	else:
 		# If call within office hours, triggering Dialogflow "Welcome" event
 		headers = {'authorization': 'Bearer ' + apiai_client_access_key, 
@@ -75,19 +68,15 @@ def start():
 		gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
 		
 		# Welcome prompt played to callers during office hours
-		values = {"text": output_text, 
-			  "polly_voiceid": polly_voiceid, 
-			  "region": "ap-southeast-2"
-			 }
+		values = {"text": output_text}
 		qs = urllib.urlencode(values)
-		print 'In start: before polly TTS'
-		gather.play(hostname + 'polly_text2speech?' + qs)
-		print 'In start: after polly TTS'
+		print 'In start: before Google TTS'
+		gather.play(hostname + 'goog_text2speech?' + qs)
+		print 'In start: after Google TTS'
 		resp.append(gather)
 		
 		# If user input is missing after welcome prompt (no speech input), redirect to collect speech input again
 		values = {'prior_text': output_text, 
-			  'polly_voiceid': polly_voiceid, 
 			  'twilio_asr_language': twilio_asr_language, 
 			  'apiai_language': apiai_language, 
 			  'SpeechResult': '', 
@@ -106,7 +95,6 @@ def start():
 def process_speech():
 	caller_phone_number = request.values.get('From')
 	user_id = request.values.get('CallSid')
-	polly_voiceid = request.values.get('polly_voiceid', "Nicole")
 	twilio_asr_language = request.values.get('twilio_asr_language', 'en-IN')
 	apiai_language = request.values.get('apiai_language', 'en')
 	prior_text = request.values.get('prior_text', 'Prior text missing')
@@ -123,7 +111,7 @@ def process_speech():
 	
 	if (confidence >= 0.0):
 		# Step 1: Call Dialogflow for intent analysis
-		intent_name, output_text, product_name, emp_id, intent_stage, dialog_state = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
+		intent_name, output_text, product_name, emp_id, intent_stage = apiai_text_to_intent(apiai_client_access_key, input_text, user_id, apiai_language)
 		
 		if intent_name == 'get_employee_number_cartwright':
 			output_text = '<speak>The employee number you provided is <say-as interpret-as="digits">' + emp_id + '</say-as>. Please confirm by saying Yes or No </speak>'
@@ -133,14 +121,11 @@ def process_speech():
         	qs2 = urllib.urlencode(values)
         	action_url = '/process_speech?' + qs2
         	gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
-        	values = {"text": output_text, 
-			  "polly_voiceid": polly_voiceid, 
-			  "region": "ap-southeast-2"
-			 }
+        	values = {"text": output_text}
 		qs1 = urllib.urlencode(values)
-		print 'In-progress: Before polly tts'
-		gather.play(hostname + 'polly_text2speech?' + qs1)
-		print 'In progress: After polly tts'
+		print 'In-progress: Before Google tts'
+		gather.play(hostname + 'goog_text2speech?' + qs1)
+		print 'In progress: After Google tts'
 		resp.append(gather)
 		
 		# Transfer for default fallback intent
@@ -163,7 +148,6 @@ def process_speech():
 			
 		# If gather is missing (no speech input), redirect to process incomplete speech via Dialogflow
 		values = {'prior_text': output_text, 
-			  "polly_voiceid": polly_voiceid, 
 			  'twilio_asr_language': twilio_asr_language, 
 			  'apiai_language': apiai_language, 
 			  'SpeechResult': '', 
@@ -175,28 +159,17 @@ def process_speech():
 	# When confidence of speech recogniton is not enough, replay the previous conversation
 	else:
 		output_text = prior_text
-        	values = {"prior_text": output_text, 
-			  "polly_voiceid": polly_voiceid, 
-			  "twilio_asr_language": twilio_asr_language, 
-			  "apiai_language": apiai_language
-			 }
+        	values = {"prior_text": output_text}
 		qs2 = urllib.urlencode(values)
 		action_url = "/process_speech?" + qs2
 		gather = Gather(input="speech", hints=hints, language=twilio_asr_language, speechTimeout="auto", action=action_url, method="POST")
-		values = {"text": output_text, 
-			  "polly_voiceid": polly_voiceid, 
-			  "region": "ap-southeast-2"
-			 }
+		values = {"text": output_text}
 		qs1 = urllib.urlencode(values)
-		print 'Before calling polly tts'
-		gather.play(hostname + 'polly_text2speech?' + qs1)
-		print 'After polly tts read'
+		print 'Before Google tts'
+		gather.play(hostname + 'goog_text2speech?' + qs1)
+		print 'After Google tts read'
 		resp.append(gather)
-		values = {"prior_text": output_text, 
-			  "polly_voiceid": polly_voiceid, 
-			  "twilio_asr_language": twilio_asr_language, 
-			  "apiai_language": apiai_language
-			 }
+		values = {"prior_text": output_text}
 		qs2 = urllib.urlencode(values)
 		action_url = "/process_speech?" + qs2
 		resp.redirect(action_url)
@@ -243,19 +216,13 @@ def apiai_text_to_intent(apiapi_client_access_key, input_text, user_id, language
 		intent_stage = output['result']['contexts']
     	except:
 		intent_stage = "unknown"
-
-    	if (output['result']['actionIncomplete']):
-		dialog_state = 'in-progress'
-    	else:
-        	dialog_state = 'complete'
     	
-	return intent_name, output_text, product_name, emp_id, intent_stage, dialog_state
-
+	return intent_name, output_text, product_name, emp_id, intent_stage
 
 # Get route point based on Intent and product#
 def getroutepoint(intent_name, product_name):
 	#Catch all exceptions
-	phone_number = "+917338856833"	
+	phone_number = "+917338856833"
 	
 	# Transfer for Billing_services
     	if intent_name == 'billing_services_cartwright':
@@ -292,7 +259,7 @@ def getroutepoint(intent_name, product_name):
 			phone_number = "+919840610434"
 					
 	# Transfer for Tech_services
-	if intent_name == 'sales_services_cartwright':
+	if intent_name == 'tech_services_cartwright':
 		if product_name == 'Postpaid':
 			phone_number = "+919840610434"
 		elif product_name == 'Prepaid':
@@ -311,7 +278,6 @@ def getroutepoint(intent_name, product_name):
 	# Transfer to General services if employee number is not provided
     	if intent_name == 'no_employee_number_cartwright':
 			phone_number = "+919840610434"
-	
 	return phone_number
 #####
 ##### Dialogflow fulfillment webhook
@@ -376,34 +342,52 @@ def processRequest(req):
 	return res
 
 #####
-##### AWS Polly for Text to Speech
-##### This function calls Polly and then streams out the in-memory media in mp3 format
+##### Google Cloud Text to speech for Speech Synthesis
+##### This function calls Google TTS and then streams out the output media in mp3 format
 #####
-@app.route('/polly_text2speech', methods=['GET', 'POST'])
+@app.route('/goog_text2speech', methods=['GET', 'POST'])
 def polly_text2speech():
-    	print 'Inside polly tts method'
-    	text = request.args.get('text', "Hello! Invalid request. Please provide the TEXT value")
-    	voiceid = request.args.get('polly_voiceid', "Nicole")
-    	region = request.args.get('region', "ap-southeast-2")
-    	# Create a client using the credentials and region
-    	polly = boto3.client("polly", aws_access_key_id = aws_access_key_id, aws_secret_access_key = aws_secret_key, region_name=region)
-    	# Request speech synthesis
-    	response = polly.synthesize_speech(Text=text, SampleRate="8000", OutputFormat="mp3", VoiceId=voiceid)
+	text = request.args.get('text', "Hello! Invalid request. Please provide the TEXT value")
+	effects_profile_id = 'telephony-class-application'
 	
-	# Access the audio stream from the response
-	if "AudioStream" in response:
-		# Note: Closing the stream is important as the service throttles on the
-		# number of parallel connections. Here we are using contextlib.closing to
-		# ensure the close method of the stream object will be called automatically
-		# at the end of the with statement's scope.
-		def generate():
-			print 'inside polly tts generate method'
-			with closing(response["AudioStream"]) as dmp3:
+	#Setting credentials -  Read env data
+	credentials_raw = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+	
+	#Generate Google TTS Credentials
+	service_account_info = json.loads(credentials_raw)
+	credentials = service_account.Credentials.from_service_account_info(service_account_info)
+		    
+	# Create Google Text-To-Speech client
+    	client = texttospeech.TextToSpeechClient(credentials=credentials)
+	
+	#pass the text to be synthesized by Google Text-To-Speech
+    	input_text = texttospeech.types.SynthesisInput(text=text)
+
+	#Set the Google Text-To-Speech voice parameters
+    	voice = texttospeech.types.VoiceSelectionParams(language_code='en-AU', name='en-AU-Wavenet-B', ssml_gender=texttospeech.enums.SsmlVoiceGender.MALE)
+
+	#Set Google Text-To-Speech audio configuration parameters
+    	audio_config = texttospeech.types.AudioConfig( 
+        	audio_encoding=texttospeech.enums.AudioEncoding.MP3, 
+		effects_profile_id=[effects_profile_id])
+
+	# Request speech synthesis from Google Text-To-Speech
+    	response = client.synthesize_speech(input_text, voice, audio_config)
+	
+	# Write the output to a temp file
+	with open('output.mp3', 'wb') as out:
+		out.write(response.audio_content)
+		print('Audio content written to file "output.mp3"')
+	
+	# Read the audio stream from the response
+	def generate():
+		print 'inside google tts generate method'
+		with closing(response["AudioStream"]) as dmp3:
+			data = dmp3.read(1024)
+			while data:
+				yield data
 				data = dmp3.read(1024)
-				while data:
-					yield data
-					data = dmp3.read(1024)
-			print 'generate complete for polly tts'
+		print 'generate complete for google tts'
 		return Response(generate(), mimetype="audio/mpeg")
     	else:
 		# The response didn't contain audio data, exit gracefully
