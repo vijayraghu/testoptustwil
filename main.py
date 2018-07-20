@@ -346,7 +346,7 @@ def processRequest(req):
 ##### This function calls Google TTS and then streams out the output media in mp3 format
 #####
 @app.route('/goog_text2speech', methods=['GET', 'POST'])
-def polly_text2speech():
+def goog_text2speech():
 	text = request.args.get('text', "Hello! Invalid request. Please provide the TEXT value")
 	effects_profile_id = 'telephony-class-application'
 	
