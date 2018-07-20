@@ -386,7 +386,7 @@ def goog_text2speech():
 		# Read the audio stream from the response
 		def generate():
 			print 'inside google tts generate method'
-			with closing(response["AudioStream"]) as dmp3:
+			with open('output.mp3', 'rb') as dmp3:
 				data = dmp3.read(1024)
 				while data:
 					yield data
