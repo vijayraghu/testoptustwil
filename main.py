@@ -43,7 +43,7 @@ def start():
 		print 'In start: before Google TTS'
 		resp.play(hostname + 'goog_text2speech?' + qs)
 		print 'In start: after Google TTS'
-		resp.dial('+919840610434')
+		resp.dial('+61447628852')
 		return str(resp)
 	else:
 		# If call within office hours, triggering Dialogflow "Welcome" event
@@ -128,14 +128,14 @@ def process_speech():
 		# Transfer for default fallback intent
 		if intent_name == 'Default Fallback Intent':
 			print 'reached default intent. Transfering...'
-			resp.dial('+917338856833')
+			resp.dial('+61447628852')
 			resp.redirect('/process_close')
 		
 		# Perform employee number validation
 		if intent_name == 'get_employee_number_cartwright_yes':
 			#Validate employee number
 			if (str(emp_id)[:2]) != '10':
-				resp.dial('+919840610434')
+				resp.dial('+61447628852')
 				resp.redirect('/process_close')
 		
 		# Transfer to routepoint based in intent and product	
@@ -228,62 +228,62 @@ def apiai_text_to_intent(apiapi_client_access_key, input_text, user_id, language
 # Get route point based on Intent and product#
 def getroutepoint(intent_name, product_name):
 	#Catch all exceptions
-	phone_number = "+917338856833"
+	phone_number = "+61447628852"
 	
 	# Transfer for Billing_services
     	if intent_name == 'billing_services_cartwright':
 		if product_name == 'Postpaid':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Prepaid':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Mobile Broadband':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Internet':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Telephony':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Optus TV':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Financial Services':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 					
 	# Transfer for Sales_services
     	if intent_name == 'sales_services_cartwright':
 		if product_name == 'Postpaid':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Prepaid':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Mobile Broadband':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Internet':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Telephony':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Optus TV':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Financial Services':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 					
 	# Transfer for Tech_services
 	if intent_name == 'tech_services_cartwright':
 		if product_name == 'Postpaid':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Prepaid':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Mobile Broadband':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Internet':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Telephony':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Optus TV':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 		elif product_name == 'Financial Services':
-			phone_number = "+919840610434"
+			phone_number = "+61421183854"
 	
 	# Transfer to General services if employee number is not provided
     	if intent_name == 'no_employee_number_cartwright':
-			phone_number = "+919840610434"
+			phone_number = "+61447628852"
 	return phone_number
 #####
 ##### Dialogflow fulfillment webhook
