@@ -125,6 +125,11 @@ def process_speech():
 		print 'In progress: After Google tts'
 		resp.append(gather)
 		
+		# Transfer to General services if employee number is not provided
+    		if intent_name == 'no_employee_number_cartwright':
+			resp.dial('+61447628852')
+			resp.redirect('/process_close')
+			
 		# Transfer for default fallback intent
 		if intent_name == 'Default Fallback Intent':
 			print 'reached default intent. Transfering...'
@@ -281,11 +286,8 @@ def getroutepoint(intent_name, product_name):
 		elif product_name == 'Financial Services':
 			phone_number = "+61421183854"
 	
-	# Transfer to General services if employee number is not provided
-    	if intent_name == 'no_employee_number_cartwright':
-		phone_number = "+61447628852"
-		
 	return phone_number
+
 #####
 ##### Dialogflow fulfillment webhook
 #####
