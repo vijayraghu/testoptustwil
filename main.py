@@ -316,18 +316,19 @@ def webhook():
 # Get details from JSON 
 def processRequest(req):
 	result = req.get('queryResult')
-	intentname = queryResult.intent.get('displayName')
-	metadata = queryResult.get('intent')
+	intentname = result.intent.get('displayName')
+	metadata = result.get('intent')
 	intentname = metadata.get('displayName')
-	parameters = queryResult.get('parameters')
+	parameters = result.get('parameters')
 	actionname = parameters.get('action')
-	emp_id = parameters.get('employee_id')
+	emp_idn = parameters.get('employee_id')
+	emp_id = str(emp_idn)
 	product_name = parameters.get('optus_product')
 	
 	# Process employee number
 	if intentname == 'get_employee_number_cartwright':
 		#Validate employee number
-		if (str(emp_id)[:2]) != '10':
+		if (emp_id[:2]) != '10':
 			fulfillmentText = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 		else:
 			employee_name = get_employee_name(emp_id)
