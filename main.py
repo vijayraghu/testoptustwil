@@ -42,6 +42,7 @@ def welcome():
 	print response		
 	output_text = response.query_result.fulfillment_text
 	output_text = output_text.decode('utf-8')
+	print output_text
 	return output_text
 	
 #####
