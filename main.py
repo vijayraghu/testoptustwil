@@ -57,6 +57,23 @@ def welcome():
 		
 	else:
 		# If call within office hours, triggering Dialogflow "Welcome" event
+		
+		#Setting credentials -  Read env data
+		credentials_dgf = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+	
+		#Setting Google Dialogflow Credentials and invoking SDK
+		service_account_info = json.loads(credentials_dgf)
+		credentials = service_account.Credentials.from_service_account_info(service_account_info)
+		session_client = dialogflow.SessionsClient(credentials=credentials)
+		session = session_client.session_path(project_id, call_id)
+		event_input = dialogflow.types.EventInput(name=Welcome, language_code=lang_code)
+		response = session_client.detect_intent(session=session, event_input=event_input)
+		print response.text		
+		output = json.loads(response.text)
+		print output
+		output_text = output['queryResult']['fulfillmentText']
+		output_text = output_text.decode('utf-8')
+		'''
 		headers = {'authorization': 'Bearer ' + apiai_client_access_key, 
 			   'content-type': 'application/json'
 			  }
@@ -69,6 +86,7 @@ def welcome():
 		output = json.loads(response.text)
 		output_text = output['result']['fulfillment']['speech']
 		output_text = output_text.decode('utf-8')
+		'''
 		resp = VoiceResponse()
 		
 		# Prepare for collecting subsequent user input
