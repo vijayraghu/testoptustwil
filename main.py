@@ -322,7 +322,7 @@ def processRequest(req):
 	parameters = result.get('parameters')
 	actionname = parameters.get('action')
 	emp_idn = parameters.get('employee_id')
-	emp_id = str(round(emp_idn)).rstrip('.')
+	emp_id = str(int(emp_idn))
 	print emp_id
 	product_name = parameters.get('optus_product')
 	
