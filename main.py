@@ -328,7 +328,7 @@ def processRequest(req):
 	
 	# Process employee number
 	if intentname == 'get_employee_number_cartwright':
-		print 'Intent :' + intent_name 
+		print 'Intent :' + intentname
 		#Validate employee number
 		if (emp_id[:2]) != '10':
 			fulfillmentText = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
