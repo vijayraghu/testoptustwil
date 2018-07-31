@@ -37,7 +37,7 @@ def welcome():
 	session_client = dialogflow.SessionsClient(credentials=credentials)
 	session = session_client.session_path(project_id, call_id)
 	event_input = dialogflow.types.EventInput(name='Welcome', language_code=lang_code)
-	response = session_client.detect_intent(session=session, event_input=event_input)
+	response = session_client.detect_intent(session=session, query_input=event_input)
 	print response.text		
 	output = json.loads(response.text)
 	print output
