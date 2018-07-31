@@ -323,10 +323,12 @@ def processRequest(req):
 	actionname = parameters.get('action')
 	emp_idn = parameters.get('employee_id')
 	emp_id = str(emp_idn)
+	print emp_id
 	product_name = parameters.get('optus_product')
 	
 	# Process employee number
 	if intentname == 'get_employee_number_cartwright':
+		print 'Intent :' + intent_name 
 		#Validate employee number
 		if (emp_id[:2]) != '10':
 			fulfillmentText = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
@@ -358,12 +360,14 @@ def processRequest(req):
 	else:
 		fulfillmentText = 'Kindly hold on while we connect you to one of our customer service agent'
 	
-	return {'fulfillmentText': fulfillmentText, 'fulfillmentMessages': fulfillmentText, 'source': 'careforyou'}
+	return {'fulfillmentText': fulfillmentText, 'source': 'careforyou'}
 	
 	return res
 	
 # Helper function for getting employee name
 def get_employee_name(emp_id):
+	print 'Inside Get employee name'
+	print emp_id
 	if emp_id == '1048350':
 		employee_name = 'Chris'
 	elif emp_id == '1048550':
