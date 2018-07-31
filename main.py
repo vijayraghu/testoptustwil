@@ -40,7 +40,7 @@ def welcome():
 	query_input = dialogflow.types.QueryInput(event=event_input)
 	response = session_client.detect_intent(session=session, query_input=query_input)
 	print response		
-	output_text = response['query_result']['fulfillment_text']
+	output_text = response.query_result.fulfillment_text
 	output_text = output_text.decode('utf-8')
 	return output_text
 	
