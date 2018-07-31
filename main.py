@@ -316,7 +316,7 @@ def webhook():
 # Get details from JSON 
 def processRequest(req):
 	result = req.get('queryResult')
-	intentname = result.intent.get('displayName')
+	#intentname = result.intent.get('displayName')
 	metadata = result.get('intent')
 	intentname = metadata.get('displayName')
 	parameters = result.get('parameters')
