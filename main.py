@@ -23,6 +23,8 @@ import datetime
 project_id = os.environ["DIALOGFLOW_PROJECT_ID"]
 #Setting Google authorization credentials -  Read env data
 credentials_dgf = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+call_id = "12345"
+lang_code = 'en'
 
 app = Flask(__name__)
 
@@ -48,8 +50,6 @@ def welcome():
 #####
 @app.route('/process_speech', methods=['GET', 'POST'])
 def process_speech():
-	call_id = "12345"
-	lang_code = 'en'
 	input_text = request.values.get('input_text', '')
 	# Step 1: Call Dialogflow for intent analysis
 	intent_name, output_text, product_name, emp_id = dialogflow_text_to_intent(project_id, input_text, call_id, lang_code)
