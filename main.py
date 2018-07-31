@@ -321,7 +321,8 @@ def processRequest(req):
 	intentname = metadata.get('displayName')
 	parameters = result.get('parameters')
 	actionname = parameters.get('action')
-	emp_id = parameters.get('employee_id.original')
+	emp_idn = parameters.get('employee_id')
+	emp_id = str(round(emp_idn)).rstrip('.')
 	print emp_id
 	product_name = parameters.get('optus_product')
 	
@@ -329,7 +330,7 @@ def processRequest(req):
 	if intentname == 'get_employee_number_cartwright':
 		print 'Intent :' + intentname
 		#Validate employee number
-		if (str(emp_id)[:2]) != '10':
+		if (emp_id[:2]) != '10':
 			fulfillmentText = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 		else:
 			employee_name = get_employee_name(emp_id)
