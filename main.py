@@ -363,15 +363,15 @@ def processRequest(req):
 	
 # Helper function for getting employee name
 def get_employee_name(emp_id):
-	if emp_id = '1048350':
+	if emp_id == '1048350':
 		employee_name = 'Chris'
-	elif emp_id = '1048550':
+	elif emp_id == '1048550':
 		employee_name = 'Mick'
-	elif emp_id = '1048550':
+	elif emp_id == '1048550':
 		employee_name = 'Josh'
-	elif emp_id = '1058670':
+	elif emp_id == '1058670':
 		employee_name = 'Paul'
-	elif emp_id = '1088430':
+	elif emp_id == '1088430':
 		employee_name = 'Cameron'
 	else:
 		employee_name = ''
