@@ -23,10 +23,8 @@ import datetime
 project_id = os.environ["DIALOGFLOW_PROJECT_ID"]
 #Setting Google authorization credentials -  Read env data
 credentials_dgf = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
-#apiai_url = "https://api.api.ai/v1/query"
-#apiai_querystring = {"v": "20150910"}
 
-# Setup hints (speech contexts) for better speech recognition
+# Setup hints (speech contexts) for better speech recognition in Twilio
 hints = "1,2,3,4,5,6,7,8,9,0, 1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, 0 zero o, account acount akount, mobile, roaming, top up topup,channels channel,tv TV, broadband broad band, fetch, extension, iphone, cable, recharge, recharging, optus Optus, Hey, EPL, English premier league, streaming, premier league"
 
 app = Flask(__name__)
@@ -56,37 +54,19 @@ def welcome():
 		return str(resp)
 		
 	else:
-		# If call within office hours, triggering Dialogflow "Welcome" event
-		
-		#Setting credentials -  Read env data
-		credentials_dgf = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
-	
+		# If call within business hours, triggering Dialogflow "Welcome" event
 		#Setting Google Dialogflow Credentials and invoking SDK
 		service_account_info = json.loads(credentials_dgf)
 		credentials = service_account.Credentials.from_service_account_info(service_account_info)
 		session_client = dialogflow.SessionsClient(credentials=credentials)
 		session = session_client.session_path(project_id, call_id)
-		event_input = dialogflow.types.EventInput(name=Welcome, language_code=lang_code)
-		response = session_client.detect_intent(session=session, event_input=event_input)
-		print response.text		
-		output = json.loads(response.text)
-		print output
-		output_text = output['queryResult']['fulfillmentText']
+		event_input = dialogflow.types.EventInput(name='Welcome', language_code=lang_code)
+		query_input = dialogflow.types.QueryInput(event=event_input)
+		response = session_client.detect_intent(session=session, query_input=query_input)
+		print response	
+		output_text = response.query_result.fulfillment_text
 		output_text = output_text.decode('utf-8')
-		'''
-		headers = {'authorization': 'Bearer ' + apiai_client_access_key, 
-			   'content-type': 'application/json'
-			  }
-		payload = {'event': {'name': 'Welcome'}, 
-			   'lang': lang_code, 
-			   'sessionId': call_id
-			  }
-		response = requests.request("POST", url=apiai_url, data=json.dumps(payload), headers=headers, params=apiai_querystring)
-		print response.text
-		output = json.loads(response.text)
-		output_text = output['result']['fulfillment']['speech']
-		output_text = output_text.decode('utf-8')
-		'''
+		print output_text
 		resp = VoiceResponse()
 		
 		# Prepare for collecting subsequent user input
@@ -167,7 +147,7 @@ def process_speech():
 		# Perform employee number validation
 		if intent_name == 'get_employee_number_cartwright_yes':
 			#Validate employee number
-			if (str(emp_id)[:2]) != '10':
+			if (str(int(emp_id))[:2]) != '10':
 				resp.dial('+61280490603')
 				resp.redirect('/process_close')
 		
@@ -183,7 +163,8 @@ def process_speech():
 			  'asr_lang': asr_lang,
 			  'lang_code': lang_code, 
 			  'SpeechResult': '', 
-			  'Confidence': 0.0}
+			  'Confidence': 0.0
+			 }
 		qs3 = urllib.urlencode(values)
 		action_url = '/process_speech?' + qs3
 		resp.redirect(action_url)
@@ -220,37 +201,32 @@ def process_close():
 #####
 #@app.route('/dialogflow_text_to_intent', methods=['GET', 'POST'])
 def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
-
-	#Generate Google Dialogflow Credentials
+	#Setting Google Dialogflow Credentials and invoking SDK
 	service_account_info = json.loads(credentials_dgf)
 	credentials = service_account.Credentials.from_service_account_info(service_account_info)
-
 	session_client = dialogflow.SessionsClient(credentials=credentials)
 	session = session_client.session_path(project_id, call_id)
-	
 	for text in input_text:
-        	text_input = dialogflow.types.TextInput(text=text, language_code=lang_code)
+                text_input = dialogflow.types.TextInput(text=text, language_code=lang_code)
 		query_input = dialogflow.types.QueryInput(text=text_input)
 		response = session_client.detect_intent(session=session, query_input=query_input)
-		output = json.loads(response.text)
-		print output
-		print json.dumps(output, indent=2)
-	
-		# Get values from Dialogflow
+		print response
+		
+		# Return properties from Dialogflow
 		try:
-			intent_name = output['query_result']['intent']['display_name']
+			intent_name = response.query_result.intent.display_name
 		except:
 			intent_name= ""
 		try:
-			product_name = output['query_result']['parameters']['optus_product']
+			product_name = response.query_result.parameters.optus_product
 		except:
 			product_name= ""
 		try:
-			emp_id = output['result']['parameters']['employee_id']
+			emp_id = response.query_result.parameters.employee_id
 		except:
 			emp_id= ""	
 		try:
-			output_text = output['query_result']['fulfillment_text']
+			output_text = response.query_result.fulfillment_text
 		except:
 			output_text = ""
     	
@@ -334,7 +310,6 @@ def webhook():
 # Get details from JSON 
 def processRequest(req):
 	result = req.get('queryResult')
-	#intentname = result.intent.get('displayName')
 	metadata = result.get('intent')
 	intentname = metadata.get('displayName')
 	parameters = result.get('parameters')
@@ -407,7 +382,7 @@ def get_employee_name(emp_id):
 #####
 @app.route('/goog_text2speech', methods=['GET', 'POST'])
 def goog_text2speech():
-	text = request.args.get('text', "Hello! Invalid request. Please provide the TEXT value")
+	text = request.args.get('text', "Oh No! There seems to be something wrong with my ram. Can you try calling back a little later after i talk to my friends in IT.")
 	
 	# Pre-process the text 
 	#if len(text) == 0:
@@ -420,9 +395,6 @@ def goog_text2speech():
 	
 	# Setting profile id
 	effects_profile_id = 'telephony-class-application'
-	
-	#Setting credentials -  Read env data
-	#credentials_raw = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 	
 	#Generate Google TTS Credentials
 	service_account_info = json.loads(credentials_dgf)
@@ -460,7 +432,7 @@ def goog_text2speech():
 			print 'generate complete for google tts'
 		return Response(generate(), mimetype="audio/mpeg")
     	else:
-		# The response didn't contain audio data, exit gracefully
+		# If The response didn't contain audio data, exit gracefully
 		print("Could not stream audio")
         	return "Error"
     
