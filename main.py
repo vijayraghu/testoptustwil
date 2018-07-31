@@ -4,6 +4,8 @@ import sys
 import urllib
 import requests
 import json
+import re
+import datetime
 from flask import Flask, request, Response, make_response, jsonify, url_for
 from contextlib import closing
 # Twilio Helper Library
@@ -13,8 +15,7 @@ from google.oauth2 import service_account
 from google.cloud import texttospeech_v1beta1 as texttospeech
 # Dialogflow V2 SDK
 import dialogflow
-import re
-import datetime
+
 
 #####
 ##### Declare Global variables
@@ -60,37 +61,32 @@ def process_speech():
 #####
 #@app.route('/dialogflow_text_to_intent', methods=['GET', 'POST'])
 def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
-
-	#Generate Google Dialogflow Credentials
+	#Setting Google Dialogflow Credentials and invoking SDK
 	service_account_info = json.loads(credentials_dgf)
 	credentials = service_account.Credentials.from_service_account_info(service_account_info)
-
 	session_client = dialogflow.SessionsClient(credentials=credentials)
 	session = session_client.session_path(project_id, call_id)
-	
 	for text in input_text:
                 text_input = dialogflow.types.TextInput(text=text, language_code=lang_code)
 		query_input = dialogflow.types.QueryInput(text=text_input)
 		response = session_client.detect_intent(session=session, query_input=query_input)
-		output = json.loads(response.text)
-		print output
-		print json.dumps(output, indent=2)
-	
-		# Get values from Dialogflow
+		print response
+		
+		# Return properties from Dialogflow
 		try:
-			intent_name = output['query_result']['intent']['display_name']
+			intent_name = response.query_result.intent.display_name
 		except:
 			intent_name= ""
 		try:
-			product_name = output['query_result']['parameters']['optus_product']
+			product_name = response.query_result.parameters.optus_product
 		except:
 			product_name= ""
 		try:
-			emp_id = output['result']['parameters']['employee_id']
+			emp_id = response.query_result.parameters.employee_id
 		except:
 			emp_id= ""	
 		try:
-			output_text = output['query_result']['fulfillment_text']
+			output_text = response.query_result.fulfillment_text
 		except:
 			output_text = ""
     	
