@@ -39,8 +39,8 @@ def welcome():
 	event_input = dialogflow.types.EventInput(name='Welcome', language_code=lang_code)
 	query_input = dialogflow.types.QueryInput(event=event_input)
 	response = session_client.detect_intent(session=session, query_input=query_input)
-	print response.text		
-	output = json.loads(response.text)
+	print response		
+	output = json.loads(response)
 	print output
 	output_text = output['queryResult']['fulfillmentText']
 	output_text = output_text.decode('utf-8')
