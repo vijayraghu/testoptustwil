@@ -85,7 +85,7 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 		# Return properties from Dialogflow
 		try:
 			#intent_name = response.query_result.intent.display_name
-			intent_name = output["intent"]["display_name"]
+			intent_name = output["intent"]["displayName"]
 		except:
 			intent_name= ""
 		try:	
