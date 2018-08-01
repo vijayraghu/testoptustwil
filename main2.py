@@ -6,15 +6,18 @@ import requests
 import json
 from flask import Flask, request, Response, make_response, jsonify, url_for
 from contextlib import closing
+import re
+import datetime
 # Twilio Helper Library
 from twilio.twiml.voice_response import VoiceResponse, Gather, Say, Dial
+# Google protobuf
+from google.protobuf.json_format import MessageToJson
 # Google Text To Speech SDK
 from google.oauth2 import service_account
 from google.cloud import texttospeech_v1beta1 as texttospeech
 # Dialogflow V2 SDK
 import dialogflow
-import re
-import datetime
+
 
 #####
 ##### Declare Global variables
@@ -206,23 +209,26 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 	credentials = service_account.Credentials.from_service_account_info(service_account_info)
 	session_client = dialogflow.SessionsClient(credentials=credentials)
 	session = session_client.session_path(project_id, call_id)
-	for text in input_text:
+	if input_text:
                 text_input = dialogflow.types.TextInput(text=text, language_code=lang_code)
 		query_input = dialogflow.types.QueryInput(text=text_input)
 		response = session_client.detect_intent(session=session, query_input=query_input)
 		print response
+		paramvalues = MessageToJson(response.query_result.parameters)
+		param_values = json.loads(paramvalues)
+		print param_values
 		
 		# Return properties from Dialogflow
 		try:
 			intent_name = response.query_result.intent.display_name
 		except:
-			intent_name= ""
+			intent_name = ""
 		try:
-			product_name = response.query_result.parameters.optus_product
+			product_name = param_values["optus_product"]
 		except:
-			product_name= ""
+			product_name = ""
 		try:
-			emp_id = response.query_result.parameters.employee_id
+			emp_id = param_values["employee_id"]
 		except:
 			emp_id= ""	
 		try:
