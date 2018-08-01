@@ -92,20 +92,20 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 			optus_product = output["optus_product"]
 		except:
 			optus_product= ""
-		'''	
+			
 		try:
 			#emp_id = response.query_result.parameters.fields.employee_id
 			emp_id = output["employee_id"]
 		except:
 			emp_id= ""	
-		'''
+		
 		try:
 			output_text = response.query_result.fulfillment_text
 			#output_text = output["fulfillmentText"]
 		except:
 			output_text = ""
     	
-	return intent_name, output_text, optus_product
+	return intent_name, output_text, optus_product, emp_id
   
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', debug = True)
