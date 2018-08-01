@@ -56,8 +56,8 @@ def process_speech():
 	print input_text
 	# Step 1: Call Dialogflow for intent analysis
 	intent_name, output_text = dialogflow_text_to_intent(project_id, call_id, input_text, lang_code)
-	print intent_name, output_text
-	return intent_name, output_text
+	print intent_name, output_text, optus_product, emp_id
+	return intent_name, output_text, optus_product, emp_id
 
 #####
 ##### Google Dialogflow V2 API - Intent identification from text
@@ -77,28 +77,30 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 		print response
 		jsonObj = MessageToJson(response.query_result)
 		output = json.loads(jsonObj)
-		output_parameter_product = output["parameters"]["optus_product"]
-		print output_parameter_product
-		output_parameter_empid = output["parameters"]["employee_id"]
-		print output_parameter_empid
+		#output_parameter_product = output["parameters"]["optus_product"]
+		#print output_parameter_product
+		#output_parameter_empid = output["parameters"]["employee_id"]
+		#print output_parameter_empid
 		
 		# Return properties from Dialogflow
 		try:
-			intent_name = response.query_result.intent.display_name
+			#intent_name = response.query_result.intent.display_name
+			intent_name = output["intent"]["display_name"]
 		except:
 			intent_name= ""
-		'''
 		try:	
-			product_name = response.query_result.parameters.fields.optus_product
+			#optus_product = response.query_result.parameters.fields.optus_product
+			optus_product = output["parameters"]["optus_product"]
 		except:
 			product_name= ""
 		try:
-			emp_id = response.query_result.parameters.fields.employee_id
+			#emp_id = response.query_result.parameters.fields.employee_id
+			emp_id = output["parameters"]["employee_id"]
 		except:
 			emp_id= ""	
-		'''
 		try:
-			output_text = response.query_result.fulfillment_text
+			#output_text = response.query_result.fulfillment_text
+			output_text = output["fulfillmentText"]
 		except:
 			output_text = ""
     	
