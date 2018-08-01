@@ -77,8 +77,10 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 		print response
 		jsonObj = MessageToJson(response.query_result)
 		output = json.loads(jsonObj)
-		output_parameter = output["parameters"]
-		print output_parameter
+		output_parameter_product = output["parameters"]["optus_product"]
+		print output_parameter_product
+		output_parameter_empid = output["parameters"]["employee_id"]
+		print output_parameter_empid
 		
 		# Return properties from Dialogflow
 		try:
