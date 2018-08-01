@@ -63,13 +63,14 @@ def process_speech():
 #####
 #@app.route('/dialogflow_text_to_intent', methods=['GET', 'POST'])
 def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
+	print project_id, call_id, input_text, lang_code
 	#Setting Google Dialogflow Credentials and invoking SDK
 	service_account_info = json.loads(credentials_dgf)
 	credentials = service_account.Credentials.from_service_account_info(service_account_info)
 	session_client = dialogflow.SessionsClient(credentials=credentials)
 	session = session_client.session_path(project_id, call_id)
 	for text in input_text:
-                text_input = dialogflow.types.TextInput(text=text, language_code=lang_code)
+		text_input = dialogflow.types.TextInput(text=text, language_code=lang_code)
 		query_input = dialogflow.types.QueryInput(text=text_input)
 		response = session_client.detect_intent(session=session, query_input=query_input)
 		print response
