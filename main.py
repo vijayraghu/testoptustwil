@@ -27,6 +27,7 @@ project_id = os.environ["DIALOGFLOW_PROJECT_ID"]
 credentials_dgf = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 call_id = "12345"
 lang_code = 'en'
+emp_id = "1043456"
 
 app = Flask(__name__)
 
