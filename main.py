@@ -81,11 +81,11 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 		except:
 			intent_name= ""
 		try:
-			product_name = response.query_result.parameters.optus_product
+			product_name = response.query_result.parameters.fields.optus_product
 		except:
 			product_name= ""
 		try:
-			emp_id = response.query_result.parameters.employee_id
+			emp_id = response.query_result.parameters.fields.employee_id
 		except:
 			emp_id= ""	
 		try:
