@@ -76,32 +76,25 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 		query_input = dialogflow.types.QueryInput(text=text_input)
 		response = session_client.detect_intent(session=session, query_input=query_input)
 		print response
-		jsonObj = MessageToJson(response.query_result.parameters)
-		output = json.loads(jsonObj)
-		#output = json.loads(jsonObj)["parameters"]
-		print output
+		paramvalues = MessageToJson(response.query_result.parameters)
+		param_values = json.loads(paramvalues)
+		print param_values
 		
 		# Return properties from Dialogflow
 		try:
 			intent_name = response.query_result.intent.display_name
-			#intent_name = output["intent"]["displayName"]
 		except:
-			intent_name= ""
+			intent_name = ""
 		try:	
-			#optus_product = response.query_result.parameters.fields.optus_product
-			optus_product = output["optus_product"]
+			optus_product = param_values["optus_product"]
 		except:
-			optus_product= ""
-			
+			optus_product = ""
 		try:
-			#emp_id = response.query_result.parameters.fields.employee_id
-			emp_id = output["employee_id"]
+			emp_id = param_values["employee_id"]
 		except:
-			emp_id= ""	
-		
+			emp_id = ""	
 		try:
 			output_text = response.query_result.fulfillment_text
-			#output_text = output["fulfillmentText"]
 		except:
 			output_text = ""
     	
