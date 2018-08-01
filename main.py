@@ -77,7 +77,8 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 		print response
 		jsonObj = MessageToJson(response.query_result)
 		output = json.loads(jsonObj)
-		print output
+		output_parameter = output["parameters"]
+		print output_parameter
 		
 		# Return properties from Dialogflow
 		try:
