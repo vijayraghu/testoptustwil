@@ -104,7 +104,7 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 		except:
 			output_text = ""
     	
-	return intent_name, output_text
+	return intent_name, output_text, optus_product, emp_id
   
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', debug = True)
