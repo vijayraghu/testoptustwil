@@ -87,12 +87,12 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 			intent_name= ""
 		try:	
 			#optus_product = response.query_result.parameters.fields.optus_product
-			optus_product = output["parameters"]["optus_product"]
+			optus_product = output["optus_product"]
 		except:
 			optus_product= ""
 		try:
 			#emp_id = response.query_result.parameters.fields.employee_id
-			emp_id = output["parameters"]["employee_id"]
+			emp_id = output["employee_id"]
 		except:
 			emp_id= ""	
 		try:
