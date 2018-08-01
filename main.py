@@ -52,8 +52,9 @@ def welcome():
 @app.route('/process_speech', methods=['GET', 'POST'])
 def process_speech():
 	input_text = request.values.get('input_text', '')
+	print input_text
 	# Step 1: Call Dialogflow for intent analysis
-	intent_name, output_text, product_name, emp_id = dialogflow_text_to_intent(project_id, input_text, call_id, lang_code)
+	intent_name, output_text, product_name, emp_id = dialogflow_text_to_intent(project_id, call_id, input_text, lang_code)
 	print intent_name, output_text, product_name, emp_id
 	return intent_name, output_text, product_name, emp_id
 
