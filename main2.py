@@ -126,7 +126,7 @@ def process_speech():
 		
 		# Step 2: Speech input processing by Twilio
 		values = {'prior_text': output_text}
-       		qs2 = urllib.urlencode(values)
+		qs2 = urllib.urlencode(values)
         	action_url = '/process_speech?' + qs2
         	gather = Gather(input="speech", hints=hints, language=asr_lang, speechTimeout="auto", action=action_url, method="POST")
         	values = {"text": output_text}
