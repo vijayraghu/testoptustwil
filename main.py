@@ -4,6 +4,7 @@ import sys
 import urllib
 import requests
 import json
+from google.protobuf.json_format import MessageToJson
 import re
 import datetime
 from flask import Flask, request, Response, make_response, jsonify, url_for
@@ -54,9 +55,9 @@ def process_speech():
 	input_text = request.values.get('input_text', '')
 	print input_text
 	# Step 1: Call Dialogflow for intent analysis
-	intent_name, output_text, product_name, emp_id = dialogflow_text_to_intent(project_id, call_id, input_text, lang_code)
-	print intent_name, output_text, product_name, emp_id
-	return intent_name, output_text, product_name, emp_id
+	intent_name, output_text = dialogflow_text_to_intent(project_id, call_id, input_text, lang_code)
+	print intent_name, output_text
+	return intent_name, output_text
 
 #####
 ##### Google Dialogflow V2 API - Intent identification from text
@@ -74,13 +75,17 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 		query_input = dialogflow.types.QueryInput(text=text_input)
 		response = session_client.detect_intent(session=session, query_input=query_input)
 		print response
+		jsonObj = MessageToJson(response.query_result)
+		output = json.loads(jsonObj)
+		print output
 		
 		# Return properties from Dialogflow
 		try:
 			intent_name = response.query_result.intent.display_name
 		except:
 			intent_name= ""
-		try:
+		'''
+		try:	
 			product_name = response.query_result.parameters.fields.optus_product
 		except:
 			product_name= ""
@@ -88,12 +93,13 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 			emp_id = response.query_result.parameters.fields.employee_id
 		except:
 			emp_id= ""	
+		'''
 		try:
 			output_text = response.query_result.fulfillment_text
 		except:
 			output_text = ""
     	
-	return intent_name, output_text, product_name, emp_id
+	return intent_name, output_text
   
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', debug = True)
