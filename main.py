@@ -58,7 +58,7 @@ def process_speech():
 	# Step 1: Call Dialogflow for intent analysis
 	intent_name, output_text, optus_product = dialogflow_text_to_intent(project_id, call_id, input_text, lang_code)
 	print intent_name, output_text, optus_product
-	return intent_name, output_text, optus_product
+	return()
 
 #####
 ##### Google Dialogflow V2 API - Intent identification from text
