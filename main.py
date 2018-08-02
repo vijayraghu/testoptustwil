@@ -141,14 +141,14 @@ def process_speech():
 			resp.dial('+61280490603')
 			resp.redirect('/process_close')
 			
-		# Transfer for default fallback intent
+		# Transfer for default fallback intent (*******To Check with Chris*******)
 		if intent_name == 'Default Fallback Intent':
 			print 'reached default intent. Transfering...'
 			resp.dial('+61280490603')
 			resp.redirect('/process_close')
 		
 		# Perform employee number validation
-		if intent_name == 'get_employee_number_cartwright_yes':
+		if intent_name == 'get_employee_number_cartwright':
 			#Validate employee number
 			if (str(int(emp_id))[:2]) != '10':
 				resp.dial('+61280490603')
@@ -321,8 +321,6 @@ def processRequest(req):
 	parameters = result.get('parameters')
 	actionname = parameters.get('action')
 	emp_id = parameters.get('employee_id')
-	emp_id = str(int(emp_id))
-	print emp_id
 	product_name = parameters.get('optus_product')
 	
 	# Process employee number
@@ -334,11 +332,7 @@ def processRequest(req):
 		else:
 			employee_name = get_employee_name(emp_id)
 			fulfillmentText = 'Thanks ' + employee_name + ' for providing your employee number. Now how can we help you today?'
-	
-	# Get employee number again if user informs that employee id interpretation is incorrect
-	elif intentname == 'get_employee_number_cartwright_no':
-		fulfillmentText = 'Please provide your employee number by speaking each digit individually'
-	
+
     	# Transfer for Billing_services
     	elif intentname == 'billing_services_cartwright':
 		fulfillmentText = 'Ok. Let me transfer you to one of my colleagues that can help you with your Billing inquiry'
