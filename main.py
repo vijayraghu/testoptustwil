@@ -334,7 +334,7 @@ def processRequest(req):
 	if intentname == 'Default Fallback Intent':
 		print 'Intent :' + intentname
 		print con_emp_id
-		if con_emp_id != '':
+		if str(con_emp_id) != '':
 			fulfillmentText = 'I am having some difficulties understanding what you said. My apologies. You can say billing inquiry, sales inquiry or technical inquiry to proceed further or else say exit to get transfered to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.' 
 		else:
 			fulfillmentText = 'I am having some difficulties understanding what you said. My apologies. Please provide your employee number by speaking each digit individually to proceed or else say exit to get transfered to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
