@@ -323,6 +323,14 @@ def processRequest(req):
 	emp_id = parameters.get('employee_id')
 	product_name = parameters.get('optus_product')
 	
+	# Handle Default Fallback Intent
+	if intent_name == 'Default Fallback Intent':
+		print 'Intent :' + intentname
+		if str(int(emp_id)) != '':
+			fulfillmentText = "I am having some difficulties understanding what you said. My apologies. You can say billing inquiry, sales inquiry or technical inquiry to proceed further or else say exit to get transfered to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.' 
+		else:
+			fulfillmentText = "I am having some difficulties understanding what you said. My apologies. Please provide your employee number by speaking each digit individually to proceed or else say exit to get transfered to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+	
 	# Process employee number
 	if intentname == 'get_employee_number_cartwright':
 		print 'Intent :' + intentname
