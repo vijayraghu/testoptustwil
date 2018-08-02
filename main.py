@@ -326,7 +326,7 @@ def processRequest(req):
 	parameters = result.get('parameters')
 	actionname = parameters.get('action')
 	emp_id = parameters.get('employee_id')
-	con_emp_id = context['parameters']['employee_id.original']
+	con_emp_id = context[1]['parameters']['employee_id.original']
 	product_name = parameters.get('optus_product')
 	
 	# Handle Default Fallback Intent
