@@ -320,8 +320,8 @@ def processRequest(req):
 	intentname = metadata.get('displayName')
 	parameters = result.get('parameters')
 	actionname = parameters.get('action')
-	emp_idn = parameters.get('employee_id')
-	emp_id = str(int(emp_idn))
+	emp_id = parameters.get('employee_id')
+	emp_id = str(int(emp_id))
 	print emp_id
 	product_name = parameters.get('optus_product')
 	
@@ -329,7 +329,7 @@ def processRequest(req):
 	if intentname == 'get_employee_number_cartwright':
 		print 'Intent :' + intentname
 		#Validate employee number
-		if (emp_id[:2]) != '10':
+		if (str(int(emp_id))[:2]) != '10':
 			fulfillmentText = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 		else:
 			employee_name = get_employee_name(emp_id)
@@ -367,15 +367,15 @@ def processRequest(req):
 def get_employee_name(emp_id):
 	print 'Inside Get employee name'
 	print emp_id
-	if emp_id == '1048350':
+	if str(int(emp_id)) == '1048350':
 		employee_name = 'Chris'
-	elif emp_id == '1048550':
+	elif str(int(emp_id)) == '1048550':
 		employee_name = 'Mick'
-	elif emp_id == '1048550':
+	elif str(int(emp_id)) == '1048550':
 		employee_name = 'Josh'
-	elif emp_id == '1058670':
+	elif str(int(emp_id)) == '1058670':
 		employee_name = 'Paul'
-	elif emp_id == '1088430':
+	elif str(int(emp_id)) == '1088430':
 		employee_name = 'Cameron'
 	else:
 		employee_name = ''
