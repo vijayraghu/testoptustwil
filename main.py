@@ -335,9 +335,10 @@ def processRequest(req):
 		print 'Intent :' + intentname
 		print con_emp_id
 		if str(con_emp_id) != '':
-			fulfillmentText = 'I am having some difficulties understanding what you said. My apologies. You can say billing inquiry, sales inquiry or technical inquiry to proceed further or else say exit to get transfered to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.' 
+			print 'I am here'
+			fulfillmentText = 'I am having difficulties understanding what you said. My apologies. You can say billing inquiry, sales inquiry or technical inquiry to proceed or else say exit to get transferred to a colleague in the General Customer Service Team' 
 		else:
-			fulfillmentText = 'I am having some difficulties understanding what you said. My apologies. Please provide your employee number by speaking each digit individually to proceed or else say exit to get transfered to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+			fulfillmentText = 'I am having difficulties understanding what you said. My apologies. Please provide your employee number by speaking each digit individually to proceed or else say exit to get transfered to a colleague in the General Customer Service Team'
 	
 	# Process employee number
 	if intentname == 'get_employee_number_cartwright':
@@ -376,9 +377,10 @@ def processRequest(req):
 		
 	# Catch all error/exception scenarios and transfer to General services
 	else:
+		print 'I am here. please check'
 		fulfillmentText = 'Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 	
-	return {'fulfillmentText': fulfillmentText, 'source': 'careforyou'}
+	return {'fulfillmentText': fulfillmentText, 'source': 'careformev2'}
 	
 	return res
 	
