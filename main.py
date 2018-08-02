@@ -18,7 +18,6 @@ from google.cloud import texttospeech_v1beta1 as texttospeech
 # Dialogflow V2 SDK
 import dialogflow
 
-
 #####
 ##### Declare Global variables
 #####
@@ -28,7 +27,7 @@ project_id = os.environ["DIALOGFLOW_PROJECT_ID"]
 credentials_dgf = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 
 # Setup hints (speech contexts) for better speech recognition in Twilio
-hints = "1,2,3,4,5,6,7,8,9,0, 1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, 0 zero o, account acount akount, mobile, roaming, top up topup,channels channel,tv TV, broadband broad band, fetch, extension, iphone, cable, recharge, recharging, optus Optus, Hey, EPL, English premier league, streaming, premier league"
+hints = "1,2,3,4,5,6,7,8,9,0, 1 one first, 2 two second, 3 three third, 4 four fourth, 5 five fifth, 6 six sixth, 7 seven seventh, 8 eight eighth,9 nine ninth, 10 ten tenth, 0 zero o, account acount akount, mobile, roaming, top up topup,channels channel,tv TV, broadband broad band, fetch, extension, iphone, cable, recharge, recharging, optus Optus, Hey, EPL, English premier league, streaming, premier league, exit, sales inquiry, billing inquiry, technical inquiry"
 
 app = Flask(__name__)
 
@@ -331,7 +330,7 @@ def processRequest(req):
 	if intentname == 'Default Fallback Intent':
 		print 'Intent :' + intentname
 		context = result.get('outputContexts')
-		if context[1]['parameters']:
+		if parameters in context:
 			con_emp_id = context[1]['parameters']['employee_id.original']
 			print con_emp_id
 			if str(con_emp_id) != '':
@@ -418,9 +417,9 @@ def goog_text2speech():
 		#text = "We are experiencing technical difficulties at the moment. Please call back later."
 	
 	# Adding space between numbers for better synthesis
-	if re.search(r'\b\d{1,16}\b', text):
-		text = re.sub('(?<=\d)(?=\d)', ' ', text)
-		print "Changed input: " + text
+	#if re.search(r'\b\d{1,16}\b', text):
+		#text = re.sub('(?<=\d)(?=\d)', ' ', text)
+		#print "Changed input: " + text
 	
 	# Setting profile id
 	effects_profile_id = 'telephony-class-application'
