@@ -338,8 +338,8 @@ def processRequest(req):
 				fulfillmentText = 'I am having difficulties understanding what you said. My apologies. You can say billing inquiry, sales inquiry or technical inquiry to proceed or else say exit to get transferred to a colleague in the General Customer Service Team' 
 			else:
 				fulfillmentText = 'I am having difficulties understanding what you said. My apologies. Please provide your employee number by speaking each digit individually to proceed or else say exit to get transfered to a colleague in the General Customer Service Team'
-		else:
-			fulfillmentText = 'I am having difficulties. Please say exit to get transferred to a colleague in the General Customer Service Team'
+		#else:
+			#fulfillmentText = 'I am having difficulties. Please say exit to get transferred to a colleague in the General Customer Service Team'
 	
 	# Process employee number
 	if intentname == 'get_employee_number_cartwright':
