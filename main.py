@@ -324,7 +324,7 @@ def processRequest(req):
 	product_name = parameters.get('optus_product')
 	
 	# Handle Default Fallback Intent
-	if intent_name == 'Default Fallback Intent':
+	if intentname == 'Default Fallback Intent':
 		print 'Intent :' + intentname
 		if str(int(emp_id)) != '':
 			fulfillmentText = 'I am having some difficulties understanding what you said. My apologies. You can say billing inquiry, sales inquiry or technical inquiry to proceed further or else say exit to get transfered to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.' 
