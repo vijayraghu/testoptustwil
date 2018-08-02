@@ -375,9 +375,9 @@ def processRequest(req):
 		fulfillmentText = 'Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 		
 	# Catch all error/exception scenarios and transfer to General services
-	else:
-		print 'I am here. please check'
-		fulfillmentText = 'Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+	#else:
+		#print 'I am here. please check'
+		#fulfillmentText = 'Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 	
 	return {'fulfillmentText': fulfillmentText, 'source': 'careformev2'}
 	
