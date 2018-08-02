@@ -36,7 +36,7 @@ app = Flask(__name__)
 def welcome():
 	cli = request.values.get('From')
 	call_id = request.values.get('CallSid')
-	asr_lang = request.values.get('asr_lang', 'en-AU')
+	asr_lang = request.values.get('asr_lang', 'en-IN')
 	lang_code = request.values.get('lang_code', 'en')
 	hostname = request.url_root
 	
@@ -141,10 +141,10 @@ def process_speech():
 			resp.redirect('/process_close')
 			
 		# Transfer for default fallback intent (*******To Check with Chris*******)
-		if intent_name == 'Default Fallback Intent':
-			print 'reached default intent. Transfering...'
-			resp.dial('+61280490603')
-			resp.redirect('/process_close')
+		#if intent_name == 'Default Fallback Intent':
+			#print 'reached default intent. Transfering...'
+			#resp.dial('+61280490603')
+			#resp.redirect('/process_close')
 		
 		# Perform employee number validation
 		if intent_name == 'get_employee_number_cartwright':
@@ -385,7 +385,9 @@ def processRequest(req):
 	
 	return res
 	
-# Helper function for getting employee name
+#####
+##### Helper function for employee name
+#####
 def get_employee_name(emp_id):
 	print 'Inside Get employee name'
 	print emp_id
