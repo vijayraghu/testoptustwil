@@ -157,9 +157,13 @@ def process_speech():
 		# Transfer to routepoint based in intent and product	
 		print 'Intent :' + intent_name
 		if intent_name != '' and product_name != '':
-			phone_number = getroutepoint(intent_name, product_name)
-			resp.dial(phone_number)
-			resp.redirect('/process_close')	
+			if (str(int(emp_id))[:2]) != '10':
+				resp.dial('+61280490603')
+				resp.redirect('/process_close')
+			else:
+				phone_number = getroutepoint(intent_name, product_name)
+				resp.dial(phone_number)
+				resp.redirect('/process_close')	
 			
 		# If gather is missing (no speech input), redirect to process incomplete speech via Dialogflow
 		values = {'prior_text': output_text, 
@@ -343,15 +347,24 @@ def processRequest(req):
 
     	# Transfer for Billing_services
     	elif intentname == 'billing_services_cartwright':
-		fulfillmentText = 'Ok. Let me transfer you to one of my colleagues that can help you with your Billing inquiry'
+		if (str(int(emp_id))[:2]) != '10':
+			fulfillmentText = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+		else:
+			fulfillmentText = 'Ok. Let me transfer you to one of my colleagues that can help you with your Billing inquiry'
 	
     	# Transfer for Sales_services   
     	elif intentname == 'sales_services_cartwright':
-		fulfillmentText = 'Ok. Let me transfer you to one of my colleagues that can help you with your Sales inquiry'
+		if (str(int(emp_id))[:2]) != '10':
+			fulfillmentText = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+		else:
+			fulfillmentText = 'Ok. Let me transfer you to one of my colleagues that can help you with your Sales inquiry'
 	
     	# Transfer for Tech_services
     	elif intentname == 'tech_services_cartwright':
-		fulfillmentText = 'Ok. Let me transfer you to one of my colleagues that can help you with your technical inquiry'
+		if (str(int(emp_id))[:2]) != '10':
+			fulfillmentText = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+		else:
+			fulfillmentText = 'Ok. Let me transfer you to one of my colleagues that can help you with your technical inquiry'
 			
     	# Transfer to General services if employee number is not provided
     	elif intentname == 'no_employee_number_cartwright':
@@ -359,7 +372,7 @@ def processRequest(req):
 		
 	# Catch all error/exception scenarios and transfer to General services
 	else:
-		fulfillmentText = 'Kindly hold on while we connect you to one of our customer service agent'
+		fulfillmentText = 'Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 	
 	return {'fulfillmentText': fulfillmentText, 'source': 'careforyou'}
 	
