@@ -321,18 +321,17 @@ def webhook():
 def processRequest(req):
 	result = req.get('queryResult')
 	metadata = result.get('intent')
-	context = result.get('outputContexts')
 	intentname = metadata.get('displayName')
 	parameters = result.get('parameters')
 	actionname = parameters.get('action')
 	emp_id = parameters.get('employee_id')
-	con_emp_id = context[1]['parameters']['employee_id.original']
-	print con_emp_id
 	product_name = parameters.get('optus_product')
 	
 	# Handle Default Fallback Intent
 	if intentname == 'Default Fallback Intent':
 		print 'Intent :' + intentname
+		context = result.get('outputContexts')
+		con_emp_id = context[1]['parameters']['employee_id.original']
 		print con_emp_id
 		if str(con_emp_id) != '':
 			print 'I am here'
