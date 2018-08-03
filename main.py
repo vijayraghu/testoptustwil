@@ -395,7 +395,7 @@ def get_employee_name(emp_id):
 		employee_name = 'Chris'
 	elif str(int(emp_id)) == '1048550':
 		employee_name = 'Mick'
-	elif str(int(emp_id)) == '1048550':
+	elif str(int(emp_id)) == '1048560':
 		employee_name = 'Josh'
 	elif str(int(emp_id)) == '1058670':
 		employee_name = 'Paul'
