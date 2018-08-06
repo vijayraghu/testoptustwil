@@ -137,7 +137,7 @@ def process_speech():
 		
 		# Transfer to General services if employee number is not provided
     		if intent_name == 'no_employee_number_cartwright':
-			resp.dial('+61450178418', action='/process_hangup', method='GET'))
+			resp.dial('+61450178418', action='/process_hangup', method='GET')
 			#resp.redirect('/process_close')
 			
 		# Transfer for default fallback intent (*******To Check with Chris*******)
