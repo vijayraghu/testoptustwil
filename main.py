@@ -105,7 +105,7 @@ def welcome():
 def process_speech():
 	cli = request.values.get('From')
 	call_id = request.values.get('CallSid')
-	asr_lang = request.values.get('asr_lang', 'en-AU')
+	asr_lang = request.values.get('asr_lang', 'en-IN')
 	lang_code = request.values.get('lang_code', 'en')
 	prior_text = request.values.get('prior_text', 'Prior text missing')
 	input_text = request.values.get('SpeechResult', '')
