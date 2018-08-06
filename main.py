@@ -196,12 +196,15 @@ def process_speech():
 	return str(resp)
 
 @app.route('/process_hangup', methods=['GET', 'POST'])
-def process_hangup(DialCallStatus):
-	print 'Dialcallstatus= ' + DialCallStatus
+def process_hangup():
+	dial_call_status = request.values.get('DialCallStatus', None)
+	print 'Dialcallstatus= ' + dial_call_status
 	resp = VoiceResponse()
 	print 'in process_hangup'
-	if DialCallStatus == 'completed':
+	if dial_call_status == 'completed':
 		resp.hangup()
+	else:
+		print 'Dialcallstatus= ' + dial_call_status
 	return str(resp)
 
 @app.route('/process_close', methods=['GET', 'POST'])
