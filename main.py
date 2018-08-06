@@ -137,8 +137,8 @@ def process_speech():
 		
 		# Transfer to General services if employee number is not provided
     		if intent_name == 'no_employee_number_cartwright':
-			resp.dial('+61450178418')
-			resp.redirect('/process_close')
+			resp.dial('+61450178418', action='/process_hangup', method='GET'))
+			#resp.redirect('/process_close')
 			
 		# Transfer for default fallback intent (*******To Check with Chris*******)
 		#if intent_name == 'Default Fallback Intent':
@@ -195,13 +195,18 @@ def process_speech():
 	print str(resp)
 	return str(resp)
 
+@app.route('/process_hangup', methods=['GET', 'POST'])
+def process_hangup(string DialCallStatus):
+	resp = VoiceResponse()
+	print 'in process_hangup'
+	if DialCallStatus == 'completed':
+		resp.hangup()
+	return str(resp)
+
 @app.route('/process_close', methods=['GET', 'POST'])
 def process_close():
 	print 'in process_close'
 	
-
-	
-
 #####
 ##### Google Dialogflow V2 API - Intent identification from text
 #####
