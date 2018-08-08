@@ -169,10 +169,22 @@ def processRequest(req):
     	# Transfer for Billing_services
     	elif intentname == 'billing_services_cartwright':
 		if (str(int(emp_id))[:2]) != '10':
-			speech = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+			speech = 'Hmmm! That does not seem to be a valid employee number. Care for me is for internal employees only. Would you like me to transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 		else:
-			speech = 'Ok. Let me transfer you to one of my colleagues that can help you with your Billing inquiry'
+			speech = 'Ok. Let me transfer you to one of my colleagues that can help you with your Billing inquiry'	
 	
+	#Process employee number again
+	if intentname == 'billing_services_cartwright-getempnumber':
+		if (str(int(emp_id))[:2]) != '10':
+			speech = 'Sorry that still don’t not check out, perhaps you should chat with your manager. Would you like me to transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+		else:
+			employee_name = get_employee_name(emp_id)
+			speech = 'Thanks ' + employee_name + ' for providing your employee number. Let me transfer you to one of my colleagues that can help you with your Billing inquiry?'
+		
+	# Transfer to General customer care when user says ok for transfer post unsuccessful employee id check
+	if intentname == 'billing_services_cartwright-transfer':
+		speech = 'My colleague in the General Customer Service Team will help you with your inquiry today.'		
+		
     	# Transfer for Sales_services   
     	elif intentname == 'sales_services_cartwright':
 		if (str(int(emp_id))[:2]) != '10':
