@@ -102,6 +102,124 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 			emp_id = ""
 
 	return intent_name, output_text, optus_product
+
+#####
+##### Dialogflow fulfillment webhook
+#####
+@app.route('/webhook', methods=['POST'])
+# Receive the JSON request from Dialogflow
+def webhook():
+	req = request.get_json(silent=True, force=True)
+	print 'Request:'
+	print json.dumps(req, indent=4)
+	res = processRequest(req)
+	res = json.dumps(res, indent=4)
+	r = make_response(res)
+	r.headers['Content-Type'] = 'application/json'
+	return r
+
+# Get details from JSON 
+def processRequest(req):
+	result = req.get('queryResult')
+	metadata = result.get('intent')
+	intentname = metadata.get('displayName')
+	parameters = result.get('parameters')
+	actionname = parameters.get('action')
+	emp_id = parameters.get('employee_id')
+	product_name = parameters.get('optus_product')
+	
+	# Handle Default Fallback Intent
+	if intentname == 'Default Fallback Intent':
+		print 'Intent :' + intentname
+		context = result.get('outputContexts')
+		if "parameters" in context[0]:
+			con_emp_id = context[0]['parameters']['employee_id.original']
+			print con_emp_id
+			if str(con_emp_id) != '':
+				print 'I am here'
+				fulfillmentText = 'I not sure I quite understand. Apologies. I’m new here at Optus and still in training and learning about all our product lines, maybe if you could tell me the general reason for your call today like Billing or Sales or perhaps it’s technical. If you are not sure, please say exit' 
+			else:
+				fulfillmentText = 'I not sure I quite understand. Apologies. If you could just tell me your employee number speaking every digit individually, i can help you. If you dont have an employee number, thats fine. Just say you dont have it or say exit.'
+		else:
+			fulfillmentText = 'I not sure I quite understand. Apologies. If you could just tell me your employee number speaking every digit individually, i can help you. If you dont have an employee number, thats fine. Just say you dont have it or say exit.'
+	
+	# Process employee number
+	if intentname == 'get_employee_number_cartwright':
+		print 'Intent :' + intentname
+		#Validate employee number
+		if (str(int(emp_id))[:2]) != '10':
+			fulfillmentText = 'Hmmm! That does not seem to be a valid employee number. Care for me is for internal employees only. Would you like me to transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+		else:
+			employee_name = get_employee_name(emp_id)
+			fulfillmentText = 'Thanks ' + employee_name + ' for providing your employee number. Now how can we help you today?'
+			
+	# Process employee number again
+	if intentname == 'get_employee_number_cartwright-again':
+		if (str(int(emp_id))[:2]) != '10':
+			fulfillmentText = 'Sorry that still don’t not check out, perhaps you should chat with your manager. Would you like me to transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+		else:
+			employee_name = get_employee_name(emp_id)
+			fulfillmentText = 'Thanks ' + employee_name + ' for providing your employee number. Now how can we help you today?'
+			
+	# Transfer to General customer care when user says ok for transfer post unsuccessful employee id check
+	if intentname == 'get_employee_number_cartwright-transfer':
+		fulfillmentText = 'My colleague in the General Customer Service Team will help you with your inquiry today.'
+
+    	# Transfer for Billing_services
+    	elif intentname == 'billing_services_cartwright':
+		if (str(int(emp_id))[:2]) != '10':
+			fulfillmentText = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+		else:
+			fulfillmentText = 'Ok. Let me transfer you to one of my colleagues that can help you with your Billing inquiry'
+	
+    	# Transfer for Sales_services   
+    	elif intentname == 'sales_services_cartwright':
+		if (str(int(emp_id))[:2]) != '10':
+			fulfillmentText = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+		else:
+			fulfillmentText = 'Ok. Let me transfer you to one of my colleagues that can help you with your Sales inquiry'
+	
+    	# Transfer for Tech_services
+    	elif intentname == 'tech_services_cartwright':
+		if (str(int(emp_id))[:2]) != '10':
+			fulfillmentText = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+		else:
+			fulfillmentText = 'Ok. Let me transfer you to one of my colleagues that can help you with your technical inquiry'
+			
+    	# Transfer to General services if employee number is not provided
+    	elif intentname == 'no_employee_number_cartwright':
+		fulfillmentText = 'Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+		
+	# Catch all error/exception scenarios and transfer to General services
+	#else:
+		#print 'I am here. please check'
+		#fulfillmentText = 'Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+	
+	return {'fulfillmentText': fulfillmentText, 'source': 'careformev2'}
+	
+	return res
+	
+#####
+##### Helper function for employee name
+#####
+def get_employee_name(emp_id):
+	print 'Inside Get employee name'
+	print emp_id
+	if str(int(emp_id)) == '1048350':
+		employee_name = 'Chris'
+	elif str(int(emp_id)) == '1048550':
+		employee_name = 'Mick'
+	elif str(int(emp_id)) == '1048560':
+		employee_name = 'Josh'
+	elif str(int(emp_id)) == '1058670':
+		employee_name = 'Paul'
+	elif str(int(emp_id)) == '1088430':
+		employee_name = 'Cameron'
+	else:
+		employee_name = ''
+		
+	return employee_name
+
   
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', debug = True)
