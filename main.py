@@ -85,6 +85,12 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 			intent_name = response.query_result.intent.display_name
 		except:
 			intent_name = ""
+		try:
+			output_text = response.query_result.fulfillment_text
+			#output_text = output_text.decode('utf-8')
+			print 'output: ' + output_text
+		except:
+			output_text = ""
 		try:	
 			optus_product = param_values["optus_product"]
 		except:
@@ -92,14 +98,8 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 		try:
 			emp_id = param_values["employee_id"]
 		except:
-			emp_id = ""	
-		try:
-			output_text = response.query_result.fulfillment_text
-			#output_text = output_text.decode('utf-8')
-			print 'output: ' + output_text
-		except:
-			output_text = ""
-    	
+			emp_id = ""
+
 	return intent_name, output_text, optus_product
   
 if __name__ == '__main__':
