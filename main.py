@@ -179,7 +179,7 @@ def processRequest(req):
 			speech = 'Sorry that still don’t not check out, perhaps you should chat with your manager. Would you like me to transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 		else:
 			employee_name = get_employee_name(emp_id)
-			speech = 'Thanks ' + employee_name + ' for providing your employee number. Let me transfer you to one of my colleagues that can help you with your Billing inquiry?'
+			speech = 'Thanks ' + employee_name + ' for providing your employee number. Let me transfer you to one of my colleagues that can help you with your Billing inquiry'
 		
 	# Transfer to General customer care when user says ok for transfer post unsuccessful employee id check
 	if intentname == 'billing_services_cartwright-transfer':
