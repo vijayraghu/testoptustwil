@@ -79,7 +79,7 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 		paramvalues = MessageToJson(response.query_result.parameters)
 		param_values = json.loads(paramvalues)
 		print param_values
-		print response.query_result.fulfillment_text
+		print response.query_result.fulfillment_text.decode('utf-8')
 		
 		# Return properties from Dialogflow
 		try:
