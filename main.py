@@ -87,8 +87,7 @@ def dialogflow_text_to_intent(project_id, call_id, input_text, lang_code):
 		except:
 			intent_name = ""
 		try:
-			output_text = response.query_result.fulfillment_text
-			output_text = output_text.encode('utf-8')
+			output_text = response.query_result.fulfillment_text.encode('utf-8')
 			print 'output: ' + output_text
 		except:
 			output_text = ""
@@ -157,7 +156,7 @@ def processRequest(req):
 	# Process employee number again
 	if intentname == 'get_employee_number_cartwright-again':
 		if (str(int(emp_id))[:2]) != '10':
-			speech = 'Sorry that still don’t not check out, perhaps you should chat with your manager. Would you like me to transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+			speech = 'Sorry that still doesn’t not check out. Perhaps you should chat with your manager. Would you like me to transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 		else:
 			employee_name = get_employee_name(emp_id)
 			speech = 'Thanks ' + employee_name + ' for providing your employee number. Now how can we help you today?'
@@ -167,7 +166,7 @@ def processRequest(req):
 		speech = 'My colleague in the General Customer Service Team will help you with your inquiry today.'
 
     	# Transfer for Billing_services
-    	elif intentname == 'billing_services_cartwright':
+    	if intentname == 'billing_services_cartwright':
 		if (str(int(emp_id))[:2]) != '10':
 			speech = 'Hmmm! That does not seem to be a valid employee number. Care for me is for internal employees only. Would you like me to transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 		else:
@@ -186,21 +185,45 @@ def processRequest(req):
 		speech = 'My colleague in the General Customer Service Team will help you with your inquiry today.'		
 		
     	# Transfer for Sales_services   
-    	elif intentname == 'sales_services_cartwright':
+    	if intentname == 'sales_services_cartwright':
 		if (str(int(emp_id))[:2]) != '10':
 			speech = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 		else:
 			speech = 'Ok. Let me transfer you to one of my colleagues that can help you with your Sales inquiry'
+			
+	#Process employee number again
+	if intentname == 'sales_services_cartwright-getempnumber':
+		if (str(int(emp_id))[:2]) != '10':
+			speech = 'Sorry that still don’t not check out, perhaps you should chat with your manager. Would you like me to transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+		else:
+			employee_name = get_employee_name(emp_id)
+			speech = 'Thanks ' + employee_name + ' for providing your employee number. Let me transfer you to one of my colleagues that can help you with your Sales inquiry'
+		
+	# Transfer to General customer care when user says ok for transfer post unsuccessful employee id check
+	if intentname == 'sales_services_cartwright-transfer':
+		speech = 'My colleague in the General Customer Service Team will help you with your inquiry today.'
 	
     	# Transfer for Tech_services
-    	elif intentname == 'tech_services_cartwright':
+    	if intentname == 'tech_services_cartwright':
 		if (str(int(emp_id))[:2]) != '10':
 			speech = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 		else:
 			speech = 'Ok. Let me transfer you to one of my colleagues that can help you with your technical inquiry'
 			
+	#Process employee number again
+	if intentname == 'tech_services_cartwright-getempnumber':
+		if (str(int(emp_id))[:2]) != '10':
+			speech = 'Sorry that still don’t not check out, perhaps you should chat with your manager. Would you like me to transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+		else:
+			employee_name = get_employee_name(emp_id)
+			speech = 'Thanks ' + employee_name + ' for providing your employee number. Let me transfer you to one of my colleagues that can help you with your technical inquiry'
+		
+	# Transfer to General customer care when user says ok for transfer post unsuccessful employee id check
+	if intentname == 'tech_services_cartwright-transfer':
+		speech = 'My colleague in the General Customer Service Team will help you with your inquiry today.'
+			
     	# Transfer to General services if employee number is not provided
-    	elif intentname == 'no_employee_number_cartwright':
+    	if intentname == 'no_employee_number_cartwright':
 		speech = 'Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 		
 	# Catch all error/exception scenarios and transfer to General services
