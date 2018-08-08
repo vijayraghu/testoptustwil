@@ -446,7 +446,7 @@ def goog_text2speech():
 	input_text = texttospeech.types.SynthesisInput(text=text)
 		
 	#Set the Google Text-To-Speech voice parameters
-    	voice = texttospeech.types.VoiceSelectionParams(language_code='en-AU', name='en-AU-Wavenet-A', ssml_gender=texttospeech.enums.SsmlVoiceGender.FEMALE)
+    	voice = texttospeech.types.VoiceSelectionParams(language_code='en-AU', name='en-AU-Wavenet-B', ssml_gender=texttospeech.enums.SsmlVoiceGender.MALE)
 
 	#Set Google Text-To-Speech audio configuration parameters
     	audio_config = texttospeech.types.AudioConfig(audio_encoding=texttospeech.enums.AudioEncoding.MP3, effects_profile_id=[effects_profile_id])
