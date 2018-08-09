@@ -170,7 +170,8 @@ def processRequest(req):
 		if (str(int(emp_id))[:2]) != '10':
 			speech = 'Hmmm! That does not seem to be a valid employee number. Care for me is for internal employees only. Would you like me to transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 		else:
-			speech = 'Ok. Let me transfer you to one of my colleagues that can help you with your Billing inquiry'	
+			employee_name = get_employee_name(emp_id)
+			speech = 'Ok ' + employee_name + '. Let me transfer you to one of my colleagues that can help you with your Billing inquiry'	
 	
 	#Process employee number again
 	if intentname == 'billing_services_cartwright-getempnumber':
@@ -187,9 +188,10 @@ def processRequest(req):
     	# Transfer for Sales_services   
     	if intentname == 'sales_services_cartwright':
 		if (str(int(emp_id))[:2]) != '10':
-			speech = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+			speech = 'Hmmm! That does not seem to be a valid employee number. Care for me is for internal employees only. Would you like me to transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 		else:
-			speech = 'Ok. Let me transfer you to one of my colleagues that can help you with your Sales inquiry'
+			employee_name = get_employee_name(emp_id)
+			speech = 'Ok ' + employee_name + '.Let me transfer you to one of my colleagues that can help you with your Sales inquiry'
 			
 	#Process employee number again
 	if intentname == 'sales_services_cartwright-getempnumber':
@@ -206,9 +208,10 @@ def processRequest(req):
     	# Transfer for Tech_services
     	if intentname == 'tech_services_cartwright':
 		if (str(int(emp_id))[:2]) != '10':
-			speech = 'Hmmm! That does not seem to be a valid employee number. Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
+			speech = 'Hmmm! That does not seem to be a valid employee number. Care for me is for internal employees only. Would you like me to transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 		else:
-			speech = 'Ok. Let me transfer you to one of my colleagues that can help you with your technical inquiry'
+			employee_name = get_employee_name(emp_id)
+			speech = 'Ok ' + employee_name + '.Let me transfer you to one of my colleagues that can help you with your technical inquiry'
 			
 	#Process employee number again
 	if intentname == 'tech_services_cartwright-getempnumber':
@@ -231,7 +234,7 @@ def processRequest(req):
 		#print 'I am here. please check'
 		#fulfillmentText = 'Let me transfer you to one of my colleagues in the General Customer Service Team that can help you with your inquiry today.'
 	
-	return {'speech': speech, 'source': 'careformev2'}
+	return {'speech': speech, 'source': 'careformev1a'}
 	
 	return res
 	
